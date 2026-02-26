@@ -11,18 +11,17 @@ class MainMenu(GameScene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    # Aqui dizemos ao Manager para trocar de cena
-                    from GameWorld import GameWorld # Import local para evitar erro circular
+                    from GameWorld import GameWorld
                     self.next_scene = GameWorld()
 
     def update(self):
-        pass # Animações de menu entrariam aqui
+        pass
 
     def render(self, screen):
         screen.fill((30, 30, 60)) # Fundo azul escuro
         
         # Texto do Título
-        title_surf = self.title_font.render("MEU SUPER JOGO", True, (255, 255, 255))
+        title_surf = self.title_font.render("Guerra", True, (255, 255, 255))
         screen.blit(title_surf, (150, 150))
         
         # Instrução

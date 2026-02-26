@@ -4,7 +4,7 @@ from MainMenu import MainMenu
 class GameManager:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((640, 480))
+        self.screen = pygame.display.set_mode((1080, 720), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.running = True
         
@@ -27,12 +27,12 @@ class GameManager:
             # 3. Verifica se a cena quer mudar (Troca de Menu -> Jogo)
             if self.current_scene.next_scene != self.current_scene:
                 self.current_scene = self.current_scene.next_scene
+            self.current_scene.next_scene = self.current_scene
 
-            # 4. Renderiza
             self.current_scene.render(self.screen)
             
             pygame.display.flip()
-            self.clock.tick(60) # Mantém 60 FPS
+            self.clock.tick(60) 
 
         pygame.quit()
 

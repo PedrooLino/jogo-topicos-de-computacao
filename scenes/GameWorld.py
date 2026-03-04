@@ -8,12 +8,15 @@ class GameWorld(GameScene):
     def __init__(self):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 40)
-        self.ground_y = 300
+        self.ground_y = 600
 
         # Plataformas (x, y, largura, altura)
         self.platforms = [
-            pygame.Rect(150, 220, 200, 20),
-            pygame.Rect(560, 200, 200, 20)
+            pygame.Rect(150, 220, 200, 10),
+            pygame.Rect(560, 200, 200, 10),
+            pygame.Rect(560, 520, 200, 10),
+            pygame.Rect(120, 500, 100, 10),
+            pygame.Rect(370, 450, 50, 10)
         ]
 
         # Player
@@ -67,5 +70,5 @@ class GameWorld(GameScene):
             enemy.draw(screen)
 
         # Texto exemplo
-        text = self.font.render("avance", True, (255, 255, 255))
+        text = self.font.render("escale", True, (255, 255, 255))
         screen.blit(text, (350, 50))

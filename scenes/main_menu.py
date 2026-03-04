@@ -1,5 +1,5 @@
 import pygame
-from GameScene import GameScene
+from scenes.GameScene import GameScene
 
 class MainMenu(GameScene):
     def __init__(self):
@@ -11,7 +11,7 @@ class MainMenu(GameScene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    from GameWorld import GameWorld
+                    from scenes.GameWorld import GameWorld
                     self.next_scene = GameWorld()
 
     def update(self):

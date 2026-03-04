@@ -1,5 +1,5 @@
 import pygame
-from MainMenu import MainMenu
+from scenes.main_menu import MainMenu
 
 class GameManager:
     def __init__(self):
@@ -8,7 +8,6 @@ class GameManager:
         self.clock = pygame.time.Clock()
         self.running = True
         
-        # Começamos com o Menu Principal
         self.current_scene = MainMenu()
 
     def run(self):
@@ -18,13 +17,10 @@ class GameManager:
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            # 1. Delega os eventos para a cena atual
             self.current_scene.handle_events(events)
             
-            # 2. Atualiza a lógica da cena
             self.current_scene.update()
-            
-            # 3. Verifica se a cena quer mudar (Troca de Menu -> Jogo)
+
             if self.current_scene.next_scene != self.current_scene:
                 self.current_scene = self.current_scene.next_scene
             self.current_scene.next_scene = self.current_scene
@@ -36,7 +32,6 @@ class GameManager:
 
         pygame.quit()
 
-# Para rodar:
 if __name__ == "__main__":
     manager = GameManager()
     manager.run()

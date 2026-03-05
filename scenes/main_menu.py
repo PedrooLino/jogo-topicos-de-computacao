@@ -18,12 +18,13 @@ class MainMenu(GameScene):
         pass
 
     def render(self, screen):
-        screen.fill((30, 30, 60)) # Fundo azul escuro
+        screen.fill((30, 30, 60))
         
-        # Texto do Título
         title_surf = self.title_font.render("Guerra", True, (255, 255, 255))
         screen.blit(title_surf, (150, 150))
         
-        # Instrução
-        hint_surf = self.font.render("Pressione ESPAÇO para Iniciar", True, (200, 200, 200))
-        screen.blit(hint_surf, (160, 300))
+        description_surf = self.font.render("Suba até o topo... cuidado com os monstros...", True, (200, 200, 200))
+        screen.blit(description_surf, (150, 300))
+
+        hint_surf = self.font.render("Pressione ESPAÇO para começar a escalada...", True, (200, 200, 200))
+        screen.blit(hint_surf, (150, 500))

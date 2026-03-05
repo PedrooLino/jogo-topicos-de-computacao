@@ -6,6 +6,11 @@ class MainMenu(GameScene):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 32)
         self.title_font = pygame.font.SysFont("Arial", 64)
+         # Carregar imagem
+        self.background = pygame.image.load("sprites/Guerra_menu.png").convert()
+        
+        # Ajustar tamanho da imagem para o tamanho da tela
+        self.background = pygame.transform.scale(self.background, (800, 600))
 
     def handle_events(self, events):
         for event in events:
@@ -18,7 +23,17 @@ class MainMenu(GameScene):
         pass
 
     def render(self, screen):
-        screen.fill((30, 30, 60))
+        # Pega tamanho atual da tela
+        screen_width, screen_height = screen.get_size()
+
+        # Redimensiona a imagem para caber na tela
+        background_scaled = pygame.transform.scale(
+            self.background,
+            (screen_width, screen_height)
+        )
+
+         # Desenha
+        screen.blit(background_scaled, (0, 0))
         
         title_surf = self.title_font.render("Guerra", True, (255, 255, 255))
         screen.blit(title_surf, (150, 150))

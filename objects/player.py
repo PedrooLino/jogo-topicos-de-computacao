@@ -28,11 +28,12 @@ class Player(GameObject):
         player_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         for plat in platforms:
-            if (player_rect.bottom - self.vel_y <= plat.top and
-                player_rect.bottom >= plat.top and
-                player_rect.right > plat.left and
-                player_rect.left < plat.right):
-                self.y = plat.top - self.height
+            plat_rect = plat.rect  # <- aqui pegamos o rect do objeto Platform
+            if (player_rect.bottom - self.vel_y <= plat_rect.top and
+                player_rect.bottom >= plat_rect.top and
+                player_rect.right > plat_rect.left and
+                player_rect.left < plat_rect.right):
+                self.y = plat_rect.top - self.height
                 self.vel_y = 0
                 self.jumping = False
 

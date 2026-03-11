@@ -12,7 +12,7 @@ class Enemy(GameObject):
         self.jumping = False
 
     def update(self, platforms, ground_y):
-        # Exemplo de movimentação simples: vai e volta horizontalmente
+        # Movimentação simples: vai e volta horizontalmente
         self.x += self.speed
         if self.x + self.width > 800 or self.x < 0:  # Limites da tela
             self.speed *= -1
@@ -23,11 +23,12 @@ class Enemy(GameObject):
 
         enemy_rect = pygame.Rect(self.x, self.y, self.width, self.height)
         for plat in platforms:
-            if (enemy_rect.bottom - self.vel_y <= plat.top and
-                enemy_rect.bottom >= plat.top and
-                enemy_rect.right > plat.left and
-                enemy_rect.left < plat.right):
-                self.y = plat.top - self.height
+            plat_rect = plat.rect  # <- aqui pegamos o rect do objeto Platform
+            if (enemy_rect.bottom - self.vel_y <= plat_rect.top and
+                enemy_rect.bottom >= plat_rect.top and
+                enemy_rect.right > plat_rect.left and
+                enemy_rect.left < plat_rect.right):
+                self.y = plat_rect.top - self.height
                 self.vel_y = 0
                 self.jumping = False
 

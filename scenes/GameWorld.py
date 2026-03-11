@@ -10,7 +10,8 @@ class GameWorld(GameScene):
         self.font = pygame.font.SysFont("Arial", 40)
         self.ground_y = 600
 
-        # plataformas (x, y, largura, altura)
+        self.projectiles = []
+       
         self.platforms = [
             pygame.Rect(150, 220, 200, 10), 
             pygame.Rect(560, 200, 200, 10),
@@ -25,7 +26,7 @@ class GameWorld(GameScene):
 
         self.enemies = [
             Enemy(400, self.ground_y - 50),
-            #Enemy(700, self.ground_y - 50)
+            
         ]
 
     def handle_events(self, events):
@@ -40,8 +41,22 @@ class GameWorld(GameScene):
         self.player.handle_input(keys)
         self.player.update(self.platforms, self.ground_y)
 
+
         for enemy in self.enemies:
-            enemy.update(self.platforms, self.ground_y)
+            enemy.update(self.platforms, self.ground_y, self.projectiles)
+
+        
+        for proj in self.projectiles[:]:
+            proj.update()
+            if proj.x < 0 or proj.x > 1080: 
+                self.projectiles.remove(proj)
+
+       
+        player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
+        for proj in self.projectiles:
+            if proj.get_rect().colliderect(player_rect):
+                from scenes.death_menu import DeathMenu
+                self.next_scene = DeathMenu()
 
         player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
 
@@ -64,3 +79,6 @@ class GameWorld(GameScene):
 
         text = self.font.render("escale", True, (255, 255, 255))
         screen.blit(text, (350, 50))
+
+        for proj in self.projectiles:
+            proj.draw(screen)

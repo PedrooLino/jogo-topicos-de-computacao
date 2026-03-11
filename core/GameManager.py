@@ -4,7 +4,7 @@ from scenes.main_menu import MainMenu
 class GameManager:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((1080, 720), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((800, 720), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.running = True
         

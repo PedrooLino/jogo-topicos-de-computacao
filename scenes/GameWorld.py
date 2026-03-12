@@ -9,7 +9,7 @@ class GameWorld(GameScene):
     def __init__(self):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 40)
-        self.ground_y = 600
+        self.ground_y = 600  # altura base da fase
 
         # jogador e inimigos
         self.player = Player(100, self.ground_y - 50)
@@ -23,6 +23,7 @@ class GameWorld(GameScene):
         """Configura plataformas da fase"""
         if level == 0:
             self.platforms = [
+                Platform(140, 50, 100, 10, "esse é o pul final"),
                 Platform(120, 130, 100, 10, "pulo final"),
                 Platform(180, 220, 200, 10, "pré pulo final"),
                 Platform(560, 280, 200, 10, "depois do toco"),
@@ -34,17 +35,16 @@ class GameWorld(GameScene):
         elif level == 1:
             self.platforms = [
                 Platform(200, 520, 150, 10, "primeira"),
-                Platform(450, 430, 150, 10, "msegunda"),
+                Platform(450, 430, 150, 10, "segunda"),
                 Platform(300, 340, 150, 10, "terceiro"),
                 Platform(100, 250, 150, 10, "quarta"),
                 Platform(200, 160, 150, 10, "quinta"),
                 Platform(300, 70, 150, 10, "sexta")
             ]
-
         elif level == 2:
             self.platforms = []
         else:
-            print("Você venceu!") 
+            print("Você venceu!")
             self.platforms = []
 
     def handle_events(self, events):
@@ -57,18 +57,33 @@ class GameWorld(GameScene):
     def update(self):
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
-        self.player.update(self.platforms, self.ground_y)
+        self.player.update(self.platforms)  # <- só passa platforms
 
-        # carregar a fase inicial se ainda não tiver
+        # carregar fase se ainda não tiver
         if not self.platforms:
             self.setup_level(self.level)
+
+        # limitar player horizontalmente
+        screen_width = pygame.display.get_surface().get_width()
+        self.player.x = max(0, min(self.player.x, screen_width - self.player.width))
+
+        # limitar player verticalmente na primeira fase
+        if self.level == 0 and self.player.y + self.player.height > self.ground_y:
+            self.player.y = self.ground_y - self.player.height
+            self.player.vel_y = 0
+            self.player.jumping = False
 
         # subir de fase
         if self.player.y < 0:
             self.level += 1
             self.setup_level(self.level)
-            # reposicionar o player embaixo da tela
             self.player.y = self.ground_y - self.player.height
+
+        # descer de fase
+        elif self.player.y > self.ground_y and self.level > 0:
+            self.level -= 1
+            self.setup_level(self.level)
+            self.player.y = 0
 
         # atualizar inimigos
         for enemy in self.enemies:
@@ -84,14 +99,6 @@ class GameWorld(GameScene):
 
     def render(self, screen):
         screen.fill((20, 120, 20))
-
-        # tamanho da tela dinâmico
-        screen_width = screen.get_width()
-        screen_height = screen.get_height()
-
-        # limitar player
-        self.player.x = max(0, min(self.player.x, screen_width - self.player.width))
-        self.player.y = max(0, min(self.player.y, screen_height - self.player.height))
 
         # desenhar plataformas
         for plat in self.platforms:

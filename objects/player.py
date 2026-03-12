@@ -21,14 +21,16 @@ class Player(GameObject):
             self.vel_y = self.jump_strength
             self.jumping = True
 
-    def update(self, platforms, ground_y):
+    def update(self, platforms):
+        """Atualiza posição e colisão com plataformas (não trava no chão)"""
         self.vel_y += self.gravity
         self.y += self.vel_y
 
         player_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         for plat in platforms:
-            plat_rect = plat.rect  # <- aqui pegamos o rect do objeto Platform
+            plat_rect = plat.rect
+            # colisão por cima da plataforma
             if (player_rect.bottom - self.vel_y <= plat_rect.top and
                 player_rect.bottom >= plat_rect.top and
                 player_rect.right > plat_rect.left and
@@ -36,11 +38,6 @@ class Player(GameObject):
                 self.y = plat_rect.top - self.height
                 self.vel_y = 0
                 self.jumping = False
-
-        if self.y + self.height >= ground_y:
-            self.y = ground_y - self.height
-            self.vel_y = 0
-            self.jumping = False
 
     def draw(self, screen):
         pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width, self.height))

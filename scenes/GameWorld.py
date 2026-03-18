@@ -20,7 +20,8 @@ class GameWorld(GameScene):
         self.platforms = []
 
     def setup_level(self, level):
-        """Configura plataformas da fase"""
+        #plataformas da fase
+        #x, y, largura, altura
         if level == 0:
             self.platforms = [
                 Platform(140, 50, 100, 10, "esse é o pul final"),
@@ -42,9 +43,17 @@ class GameWorld(GameScene):
                 Platform(300, 70, 150, 10, "sexta")
             ]
         elif level == 2:
-            self.platforms = []
+            self.platforms = [
+                Platform(200, 600, 150, 10, "primeira"),
+                Platform(450, 510, 150, 10, "segunda"),
+                Platform(300, 420, 150, 10, "terceiro"),
+                Platform(100, 330, 150, 10, "quarta"),
+                Platform(200, 240, 150, 10, "quinta"),
+                Platform(300, 150, 150, 10, "sexta"),
+                Platform(300, 60, 150, 10, "setima")
+            ]
         else:
-            print("Você venceu!")
+            print("fim do jogo")
             self.platforms = []
 
     def handle_events(self, events):

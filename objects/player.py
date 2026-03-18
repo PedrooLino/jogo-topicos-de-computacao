@@ -22,22 +22,29 @@ class Player(GameObject):
             self.jumping = True
 
     def update(self, platforms):
-        """Atualiza posição e colisão com plataformas (não trava no chão)"""
         self.vel_y += self.gravity
-        self.y += self.vel_y
-
-        player_rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        next_y = self.y + self.vel_y
+        player_rect = pygame.Rect(self.x, next_y, self.width, self.height)
 
         for plat in platforms:
+            if hasattr(plat, "estado") and plat.estado != "normal":
+                continue
+
             plat_rect = plat.rect
-            # colisão por cima da plataforma
-            if (player_rect.bottom - self.vel_y <= plat_rect.top and
-                player_rect.bottom >= plat_rect.top and
-                player_rect.right > plat_rect.left and
-                player_rect.left < plat_rect.right):
-                self.y = plat_rect.top - self.height
-                self.vel_y = 0
-                self.jumping = False
+
+            if self.vel_y > 0 and player_rect.bottom >= plat_rect.top and player_rect.top < plat_rect.top:
+                if player_rect.right > plat_rect.left and player_rect.left < plat_rect.right:
+                    self.y = plat_rect.top - self.height
+                    self.vel_y = 0
+                    self.jumping = False
+
+                    if hasattr(plat, "trigger"):
+                        plat.trigger()
+                    break
+        else:
+            self.y = next_y
 
     def draw(self, screen):
-        pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width, self.height))
+        rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        pygame.draw.rect(screen, (255, 0, 0), rect)
+        #pygame.draw.rect(screen, (0, 0, 0), rect, 2)

@@ -9,19 +9,16 @@ class GameWorld(GameScene):
     def __init__(self):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 40)
-        self.ground_y = 600  # altura base da fase
+        self.ground_y = 600
 
-        # jogador e inimigos
         self.player = Player(100, self.ground_y - 50)
         self.enemies = [Enemy(400, self.ground_y - 50)]
 
-        # fase inicial
         self.level = 1
         self.platforms = []
 
     def setup_level(self, level):
-        #plataformas da fase
-        #x, y, largura, altura
+        """Configura as plataformas da fase"""
         if level == 0:
             self.platforms = [
                 Platform(240, 50, 100, 10, "esse é o pul final"),
@@ -30,7 +27,7 @@ class GameWorld(GameScene):
                 Platform(560, 280, 200, 10, "depois do toco"),
                 Platform(500, 370, 20, 10, "toquim"),
                 Platform(370, 450, 50, 10, "meio"),
-                Platform(120, 500, 100, 10, "moeda"),
+                Platform(120, 500, 100, 10, "moeda", quebravel=True),
                 Platform(560, 520, 200, 10, "primeira")
             ]
         elif level == 1:
@@ -49,34 +46,35 @@ class GameWorld(GameScene):
                 Platform(300, 420, 150, 10, "terceiro"),
                 Platform(100, 330, 150, 10, "quarta"),
                 Platform(200, 240, 150, 10, "quinta"),
-                Platform(300, 150, 150, 10, "sexta"),
+                Platform(300, 150, 150, 10, "sexta", quebravel=True),
                 Platform(300, 60, 150, 10, "setima")
             ]
         else:
-            print("fim do jogo")
+            print("Fim do jogo")
             self.platforms = []
 
     def handle_events(self, events):
         for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    from scenes.main_menu import MainMenu
-                    self.next_scene = MainMenu()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                from scenes.main_menu import MainMenu
+                self.next_scene = MainMenu()
 
     def update(self):
+        # atualizar as plataformas
+        for plat in self.platforms:
+            plat.update()
+
+        # atualizar o player
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
-        self.player.update(self.platforms)  # <- só passa platforms
+        self.player.update(self.platforms)
 
-        # carregar fase se ainda não tiver
         if not self.platforms:
             self.setup_level(self.level)
 
-        # limitar player horizontalmente
         screen_width = pygame.display.get_surface().get_width()
         self.player.x = max(0, min(self.player.x, screen_width - self.player.width))
 
-        # limitar player verticalmente na primeira fase
         if self.level == 0 and self.player.y + self.player.height > self.ground_y:
             self.player.y = self.ground_y - self.player.height
             self.player.vel_y = 0
@@ -94,11 +92,9 @@ class GameWorld(GameScene):
             self.setup_level(self.level)
             self.player.y = 0
 
-        # atualizar inimigos
         for enemy in self.enemies:
             enemy.update(self.platforms, self.ground_y)
 
-        # colisão com inimigos
         player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
         for enemy in self.enemies:
             enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
@@ -109,15 +105,13 @@ class GameWorld(GameScene):
     def render(self, screen):
         screen.fill((20, 120, 20))
 
-        # desenhar plataformas
         for plat in self.platforms:
             plat.draw(screen)
 
-        # desenhar player e inimigos
         self.player.draw(screen)
         for enemy in self.enemies:
             enemy.draw(screen)
 
-        # texto
-        text = self.font.render("escale", True, (255, 255, 255))
+        #texto na hud só pra teste
+        text = self.font.render(f"Fase: {self.level}", True, (255, 255, 255))
         screen.blit(text, (350, 50))

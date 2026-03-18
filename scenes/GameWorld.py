@@ -16,7 +16,7 @@ class GameWorld(GameScene):
         self.enemies = [Enemy(400, self.ground_y - 50)]
 
         # fase inicial
-        self.level = 0
+        self.level = 1
         self.platforms = []
 
     def setup_level(self, level):
@@ -24,7 +24,7 @@ class GameWorld(GameScene):
         #x, y, largura, altura
         if level == 0:
             self.platforms = [
-                Platform(140, 50, 100, 10, "esse é o pul final"),
+                Platform(240, 50, 100, 10, "esse é o pul final"),
                 Platform(120, 130, 100, 10, "pulo final"),
                 Platform(180, 220, 200, 10, "pré pulo final"),
                 Platform(560, 280, 200, 10, "depois do toco"),
@@ -39,12 +39,12 @@ class GameWorld(GameScene):
                 Platform(450, 430, 150, 10, "segunda"),
                 Platform(300, 340, 150, 10, "terceiro"),
                 Platform(100, 250, 150, 10, "quarta"),
-                Platform(200, 160, 150, 10, "quinta"),
-                Platform(300, 70, 150, 10, "sexta")
+                Platform(400, 160, 150, 10, "quinta"),
+                Platform(600, 70, 150, 10, "sexta")
             ]
         elif level == 2:
             self.platforms = [
-                Platform(200, 600, 150, 10, "primeira"),
+                Platform(300, 600, 150, 10, "primeira"),
                 Platform(450, 510, 150, 10, "segunda"),
                 Platform(300, 420, 150, 10, "terceiro"),
                 Platform(100, 330, 150, 10, "quarta"),

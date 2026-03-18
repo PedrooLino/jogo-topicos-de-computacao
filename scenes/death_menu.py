@@ -18,7 +18,7 @@ class DeathMenu(GameScene):
 
     def render(self, screen):
         screen.fill((0, 0, 0))
-        text = self.font.render("Você sucumbiu a escuridão... mas ainda há esperença...", True, (255, 0, 0))
+        text = self.font.render("Você sucumbiu a escuridão... Mas ainda há esperença...", True, (255, 0, 0))
         screen.blit(text, (100, 200))
 
         text2 = self.font.render("Pressione ESPAÇO para tentar de novo", True, (255, 0, 0))

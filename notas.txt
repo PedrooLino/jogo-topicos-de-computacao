@@ -1,0 +1,34 @@
+-geral-
+moeda pra platinar (3)
+chave pra porta escondida pra uma "puzzle" room pa pega um poder
+boss terem a mesma pool drop
+boss serem tipo cuphead
+vida nos inimigo
+arrumar o tamanho da tela do jogo
+colocar um npc (espirito) pra explicar lore no começo de cada fase (colocar um mini altar nos lugares que ele aparece pra inicar o chat)
+
+-arma-
+inicial (tiro padrão, inf)
+minigun (vários tiro, 80 tiro)
+laser (um laser, 10 usos)
+armadilha (bota armadilha no chão, 3 usos)
+
+-poder-
+poder de dar double jump 3x
+shield pa tankar 1x
+poder de dano dobrado (30s)
+
+-inimigo-
+normal
+voador (voa)
+parado (fica numa plataforma parado e de vez em quando da um ataque)
+
+-fases-
+fase que tem um demônio la em cima atirando umas pedrona em tu
+
+-LORE-
+
+Os demonios vieram para o reino dos humanos em busca de destruição, no processo o mundo humano foi destruido em grande parte, apenas restam ruinas... Agora resta a você
+passar pelos demonios e seus servos e chegar até o santo graal antes deles.
+
+O personagem veio de uma família exterminadora de demonios, mas nunca houve registros de um caso sequer, até hoje.

@@ -71,7 +71,7 @@ class GameWorld(GameScene):
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
 
-        # update do player (APENAS UMA VEZ)
+        # update do player
         if self.level == 0:
             self.player.update(self.platforms, self.ground_y)
         else:

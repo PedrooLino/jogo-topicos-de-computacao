@@ -14,7 +14,7 @@ class GameWorld(GameScene):
         self.player = Player(100, self.ground_y - 50)
         self.enemies = [Enemy(400, self.ground_y - 50)]
 
-        self.level = 1
+        self.level = 0
         self.platforms = []
 
     def setup_level(self, level):
@@ -67,7 +67,10 @@ class GameWorld(GameScene):
         # atualizar o player
         keys = pygame.key.get_pressed()
         self.player.handle_input(keys)
-        self.player.update(self.platforms)
+        if self.level == 0:
+            self.player.update(self.platforms, self.ground_y)
+        else:
+            self.player.update(self.platforms, ground_y=None) 
 
         if not self.platforms:
             self.setup_level(self.level)

@@ -55,7 +55,7 @@ class Player(GameObject):
                     break
 
         # colisão com o chão
-        if next_y + self.height >= ground_y:
+        if ground_y is not None and next_y + self.height >= ground_y:
             next_y = ground_y - self.height
             self.vel_y = 0
             self.jumping = False

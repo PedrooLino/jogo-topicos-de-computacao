@@ -18,7 +18,8 @@ poder de dar double jump 3x
 shield pa tankar 1x
 poder de dano dobrado (30s)
 
--inimigo-
+-inimigos-
+arrumar matar um matar todos
 normal
 voador (voa)
 parado (fica numa plataforma parado e de vez em quando da um ataque)

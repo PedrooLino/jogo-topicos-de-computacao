@@ -3,7 +3,7 @@ from scenes.GameScene import GameScene
 from objects.player import Player
 from objects.enemy import Enemy
 from objects.platform import Platform
-
+from levels.levels import LEVELS
 class GameWorld(GameScene):
 
     def __init__(self):
@@ -21,40 +21,14 @@ class GameWorld(GameScene):
         self.platforms = []
 
     def setup_level(self, level):
-        """Configura as plataformas da fase"""
-        if level == 0:
-            self.platforms = [
-                Platform(240, 50, 100, 10, "esse é o pul final"),
-                Platform(120, 130, 100, 10, "pulo final"),
-                Platform(180, 220, 200, 10, "pré pulo final"),
-                Platform(560, 280, 200, 10, "depois do toco"),
-                Platform(500, 370, 20, 10, "toquim"),
-                Platform(370, 450, 50, 10, "meio"),
-                Platform(120, 500, 100, 10, "moeda", quebravel=True),
-                Platform(560, 520, 200, 10, "primeira")
-            ]
-        elif level == 1:
-            self.platforms = [
-                Platform(200, 520, 150, 10, "primeira"),
-                Platform(450, 430, 150, 10, "segunda"),
-                Platform(300, 340, 150, 10, "terceiro"),
-                Platform(100, 250, 150, 10, "quarta"),
-                Platform(400, 160, 150, 10, "quinta"),
-                Platform(600, 70, 150, 10, "sexta")
-            ]
-        elif level == 2:
-            self.platforms = [
-                Platform(300, 600, 150, 10, "primeira"),
-                Platform(450, 510, 150, 10, "segunda"),
-                Platform(300, 420, 150, 10, "terceiro"),
-                Platform(100, 330, 150, 10, "quarta"),
-                Platform(200, 240, 150, 10, "quinta"),
-                Platform(300, 150, 150, 10, "sexta", quebravel=True),
-                Platform(300, 60, 150, 10, "setima")
-            ]
-        else:
+        self.platforms = []
+
+        if level not in LEVELS:
             print("Fim do jogo")
-            self.platforms = []
+            return
+
+        for data in LEVELS[level]:
+            self.platforms.append(Platform(*data))
 
     def handle_events(self, events):
         for event in events:

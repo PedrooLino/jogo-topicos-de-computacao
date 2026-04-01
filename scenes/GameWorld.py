@@ -123,8 +123,11 @@ class GameWorld(GameScene):
             for enemy in self.enemies[:]:
                 enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
                 if proj.get_rect().colliderect(enemy_rect):
-                    self.enemies.remove(enemy)
-                    self.player_projectiles.remove(proj)
+                    enemy.take_damage(1)
+    
+                    if proj in self.player_projectiles:
+                        self.player_projectiles.remove(proj)
+    
                     break
 
         # colisões
@@ -144,6 +147,9 @@ class GameWorld(GameScene):
                 from scenes.death_menu import DeathMenu
                 self.next_scene = DeathMenu()
                 return
+            
+        # remover inimigos mortos
+        self.enemies = [enemy for enemy in self.enemies if enemy.alive]
 
     def render(self, screen):
         screen.fill((20, 120, 20))

@@ -15,10 +15,11 @@ class GameWorld(GameScene):
         self.enemy_projectiles = []
 
         self.player = Player(100, self.ground_y - 50)
-        self.enemies = [Enemy(400, self.ground_y - 50)]
+        
 
         self.level = 0
         self.platforms = []
+        self.setup_level(self.level)
 
     def setup_level(self, level):
         """Configura as plataformas da fase"""
@@ -33,6 +34,11 @@ class GameWorld(GameScene):
                 Platform(120, 500, 100, 10, "moeda", quebravel=True),
                 Platform(560, 520, 200, 10, "primeira")
             ]
+            self.enemies = [
+            Enemy(400, self.ground_y - 50),
+           
+            ]
+
         elif level == 1:
             self.platforms = [
                 Platform(200, 520, 150, 10, "primeira"),
@@ -41,6 +47,10 @@ class GameWorld(GameScene):
                 Platform(100, 250, 150, 10, "quarta"),
                 Platform(400, 160, 150, 10, "quinta"),
                 Platform(600, 70, 150, 10, "sexta")
+            ]
+            self.enemies = [
+            Enemy(300, 500),
+            
             ]
         elif level == 2:
             self.platforms = [
@@ -55,6 +65,8 @@ class GameWorld(GameScene):
         else:
             print("Fim do jogo")
             self.platforms = []
+
+        
 
     def handle_events(self, events):
         for event in events:
@@ -77,8 +89,7 @@ class GameWorld(GameScene):
         else:
             self.player.update(self.platforms, ground_y=None)
 
-        if not self.platforms:
-            self.setup_level(self.level)
+        
 
         # limitar na tela
         screen_width = pygame.display.get_surface().get_width()
@@ -120,15 +131,19 @@ class GameWorld(GameScene):
         for proj in self.player_projectiles[:]:
             proj.update()
 
-            for enemy in self.enemies[:]:
+            hit = False  # ✅ controla se já acertou alguém
+
+            for enemy in self.enemies:
                 enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
+
                 if proj.get_rect().colliderect(enemy_rect):
                     enemy.take_damage(1)
-    
-                    if proj in self.player_projectiles:
-                        self.player_projectiles.remove(proj)
-    
-                    break
+                    hit = True
+                    break  # ✅ para no primeiro inimigo
+
+            if hit:
+                if proj in self.player_projectiles:
+                    self.player_projectiles.remove(proj)
 
         # colisões
         player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)

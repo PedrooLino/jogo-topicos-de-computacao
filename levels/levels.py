@@ -1,13 +1,13 @@
+#x y larguta altura
+#600
+#90
 LEVELS = {
     0: [
-        (240, 50, 100, 10, "esse é o pul final"),
-        (120, 130, 100, 10, "pulo final"),
-        (180, 220, 200, 10, "pré pulo final"),
-        (560, 280, 200, 10, "depois do toco"),
-        (500, 370, 20, 10, "toquim"),
-        (370, 450, 50, 10, "meio"),
-        (120, 500, 100, 10, "moeda", True),
-        (560, 520, 200, 10, "primeira"),
+        (325, 920, 200, 20, "primeira"),
+        (750, 830, 200, 20, "segunda"),
+        (1200, 950, 150, 40, "tunel baixo"),
+        (1200, 600, 150, 200, "tunel cima"),
+        (1100, 700, 100, 20, "pitoco no tunel cima"),
     ],
 
     1: [

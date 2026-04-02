@@ -4,8 +4,9 @@ chave pra porta escondida pra uma "puzzle" room pa pega um poder
 boss terem a mesma pool drop
 boss serem tipo cuphead
 vida nos inimigo
-arrumar o tamanho da tela do jogo
+arrumar o tamanho da tela do jogo pra fullscreen
 colocar um npc (espirito) pra explicar lore no começo de cada fase (colocar um mini altar nos lugares que ele aparece pra inicar o chat)
+arrumar o player passar pela plataforma caso ela seja alta
 
 -arma-
 inicial (tiro padrão, inf)
@@ -29,7 +30,7 @@ fase que tem um demônio la em cima atirando umas pedrona em tu
 
 -LORE-
 
-Os demonios vieram para o reino dos humanos em busca de destruição, no processo o mundo humano foi destruido em grande parte, apenas restam ruinas... Agora resta a você
-passar pelos demonios e seus servos e chegar até o santo graal antes deles.
+Os demonios vieram para o reino dos humanos em busca de destruição, no processo o mundo humano foi destruido em grande parte, apenas
+restam ruinas... Agora resta a você passar pelos demonios e seus servos e chegar até o santo graal antes deles.
 
 O personagem veio de uma família exterminadora de demonios, mas nunca houve registros de um caso sequer, até hoje.

@@ -10,7 +10,7 @@ class GameWorld(GameScene):
     def __init__(self):
         super().__init__()
         self.font = pygame.font.SysFont("Arial", 40)
-        self.ground_y = 600
+        self.ground_y = 1000
 
         self.player_projectiles = []
         self.enemy_projectiles = []

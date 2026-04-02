@@ -4,7 +4,7 @@ from objects.projectile import Projectile
 
 class Player(GameObject):
     
-    def __init__(self, x, y, width=50, height=50, speed=5, jump_strength=-10, gravity=0.5):
+    def __init__(self, x, y, width=50, height=50, speed=5, jump_strength=-12, gravity=0.5):
         super().__init__(x, y)
         self.width = width
         self.height = height

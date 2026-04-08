@@ -14,64 +14,69 @@ class Player(GameObject):
         self.jump_strength = jump_strength
         self.jumping = False
 
-        self.direction = 1  # 1 = direita, -1 = esquerda
+        self.direction = 1
         self.shoot_delay = 500
         self.last_shot = pygame.time.get_ticks()
 
     def handle_input(self, keys):
+        self.vel_x = 0 
         if keys[pygame.K_a]:
-            self.x -= self.speed
+            self.vel_x = -self.speed
             self.direction = -1
         if keys[pygame.K_d]:
-            self.x += self.speed
+            self.vel_x = self.speed
             self.direction = 1
+            
         if keys[pygame.K_w] and not self.jumping:
             self.vel_y = self.jump_strength
             self.jumping = True
             self.on_ground = False
 
     def update(self, platforms, ground_y=600):
-        # aplicar gravidade
-        self.vel_y += self.gravity
-        previous_y = self.y
-        next_y = self.y + self.vel_y
-        player_rect = pygame.Rect(self.x, next_y, self.width, self.height)
+        self.x += self.vel_x
+        player_rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        
+        for plat in platforms:
+            if hasattr(plat, "estado") and plat.estado != "normal":
+                continue
+            
+            if player_rect.colliderect(plat.rect):
+                if self.vel_x > 0:
+                    self.x = plat.rect.left - self.width
+                elif self.vel_x < 0:
+                    self.x = plat.rect.right
+                player_rect.x = self.x 
 
-        # reset do estado de chão a cada update
+        self.vel_y += self.gravity
+        self.y += self.vel_y
+        player_rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        
         self.on_ground = False
 
         for plat in platforms:
-            # ignora plataformas quebráveis já abertas
             if hasattr(plat, "estado") and plat.estado != "normal":
                 continue
 
-            plat_rect = plat.rect
-
-            # colisão vertical apenas se o player estava acima da plataforma
-            if previous_y + self.height <= plat_rect.top and next_y + self.height >= plat_rect.top:
-                if player_rect.right > plat_rect.left and player_rect.left < plat_rect.right:
-                    next_y = plat_rect.top - self.height
+            if player_rect.colliderect(plat.rect):
+                if self.vel_y > 0:
+                    self.y = plat.rect.top - self.height
                     self.vel_y = 0
                     self.jumping = False
                     self.on_ground = True
-
-                    # dispara trigger de plataforma quebrável
                     if hasattr(plat, "trigger"):
                         plat.trigger()
-                    break
+                elif self.vel_y < 0:
+                    self.y = plat.rect.bottom
+                    self.vel_y = 0
 
-        # colisão com o chão
-        if ground_y is not None and next_y + self.height >= ground_y:
-            next_y = ground_y - self.height
+        if ground_y is not None and self.y + self.height >= ground_y:
+            self.y = ground_y - self.height
             self.vel_y = 0
             self.jumping = False
             self.on_ground = True
 
-        # se não está no chão, considera que está no ar
         if not self.on_ground:
             self.jumping = True
-
-        self.y = next_y
 
     def draw(self, screen):
         pygame.draw.rect(screen, (255, 0, 0), (self.x, self.y, self.width, self.height))

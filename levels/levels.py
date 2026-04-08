@@ -7,6 +7,7 @@ LEVELS = {
         (750, 830, 200, 20, "segunda"),
         (1200, 950, 150, 40, "tunel baixo"),
         (1200, 600, 150, 200, "tunel cima"),
+        (1350, 650, 600, 60, "teto do buraco"),
         (1100, 700, 100, 20, "pitoco no tunel cima"),
     ],
 

@@ -4,11 +4,16 @@ from scenes.main_menu import MainMenu
 class GameManager:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode((800, 720), pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        
+        self.screen_width, self.screen_height = self.screen.get_size()
+        
         self.clock = pygame.time.Clock()
         self.running = True
         
         self.current_scene = MainMenu()
+
+
 
     def run(self):
         while self.running:

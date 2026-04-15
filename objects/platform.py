@@ -5,9 +5,9 @@ class Platform:
         self.rect = pygame.Rect(x, y, width, height)
         self.name = name
         self.quebravel = quebravel
-        self.estado = "normal"  # normal, abrindo, aberta
+        self.estado = "normal" 
         self.offset = 0
-        self.vel_abertura = 2  # velocidade de abertura 
+        self.vel_abertura = 2
 
     def update(self):
         if self.estado == "abrindo":

@@ -4,7 +4,6 @@ chave pra porta escondida pra uma "puzzle" room pa pega um poder
 boss terem a mesma pool drop
 boss serem tipo cuphead
 vida nos inimigo
-arrumar o tamanho da tela do jogo
 colocar um npc (espirito) pra explicar lore no começo de cada fase (colocar um mini altar nos lugares que ele aparece pra inicar o chat)
 
 -arma-

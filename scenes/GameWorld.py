@@ -16,15 +16,20 @@ class GameWorld(GameScene):
         self.enemy_projectiles = []
 
         self.player = Player(100, self.ground_y - 50)
-        self.enemies = [Enemy(400, self.ground_y - 50)]
+        
 
         self.level = 0
         self.platforms = []
-
+        self.enemies = []
         self.setup_level(self.level)
+
+        
+
+       
 
     def setup_level(self, level):
         self.platforms = []
+        self.enemies = []
 
         if level not in LEVELS:
             print("Fim do jogo")
@@ -32,6 +37,11 @@ class GameWorld(GameScene):
 
         for data in LEVELS[level]:
             self.platforms.append(Platform(*data))
+
+        if level == 0:
+            self.enemies.append(Enemy(500, 800))
+        if level == 0:
+            self.enemies.append(Enemy(600, 800))
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -57,6 +67,9 @@ class GameWorld(GameScene):
         ground_y = self.ground_y if self.level == 0 else None
         self.player.update(self.platforms, ground_y)
 
+        
+
+        # limitar na tela
         screen_width = pygame.display.get_surface().get_width()
         self.player.x = max(0, min(self.player.x, screen_width - self.player.width))
 
@@ -65,21 +78,30 @@ class GameWorld(GameScene):
             enemy.update(self.platforms, self.ground_y, self.enemy_projectiles)
 
     def update_projectiles(self):
+        screen_width = pygame.display.get_surface().get_width()
         # inimigos
         for proj in self.enemy_projectiles[:]:
             proj.update()
-            if proj.x < 0 or proj.x > 1080:
+            if proj.x < 0 or proj.x > screen_width:
                 self.enemy_projectiles.remove(proj)
 
         # player
         for proj in self.player_projectiles[:]:
             proj.update()
-            for enemy in self.enemies[:]:
+
+            hit = False  # ✅ controla se já acertou alguém
+
+            for enemy in self.enemies:
                 enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
+
                 if proj.get_rect().colliderect(enemy_rect):
-                    self.enemies.remove(enemy)
+                    enemy.take_damage(1)
+                    hit = True
+                    break  # ✅ para no primeiro inimigo
+
+            if hit:
+                if proj in self.player_projectiles:
                     self.player_projectiles.remove(proj)
-                    break
 
     def check_collisions(self):
         player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
@@ -96,6 +118,9 @@ class GameWorld(GameScene):
                 from scenes.death_menu import DeathMenu
                 self.next_scene = DeathMenu()
                 return
+            
+        # remover inimigos mortos o
+        self.enemies = [enemy for enemy in self.enemies if enemy.alive]
 
     def handle_level_transitions(self):
         if self.player.y < 0:

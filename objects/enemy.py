@@ -11,6 +11,8 @@ class Enemy(GameObject):
         self.vel_y = 0
         self.gravity = 0.5
         self.jumping = False
+        self.hp = 3
+        self.alive = True
 
         self.shoot_delay = 1500 
         self.last_shot = pygame.time.get_ticks()
@@ -18,7 +20,9 @@ class Enemy(GameObject):
     def update(self, platforms, ground_y, projectiles_list):
        
         self.x += self.speed
-        if self.x + self.width > 800 or self.x < 0: 
+        screen_width = pygame.display.get_surface().get_width()
+
+        if self.x + self.width > screen_width or self.x < 0:
             self.speed *= -1
 
         now = pygame.time.get_ticks()
@@ -52,3 +56,8 @@ class Enemy(GameObject):
 
     def draw(self, screen):
         pygame.draw.rect(screen, (0, 0, 255), (self.x, self.y, self.width, self.height))
+
+    def take_damage(self, damage=1):
+        self.hp -= damage
+        if self.hp <= 0:
+            self.alive = False

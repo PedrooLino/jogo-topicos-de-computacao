@@ -33,3 +33,11 @@ Os demonios vieram para o reino dos humanos em busca de destruição, no process
 restam ruinas... Agora resta a você passar pelos demonios e seus servos e chegar até o santo graal antes deles.
 
 O personagem veio de uma família exterminadora de demonios, mas nunca houve registros de um caso sequer, até hoje.
+
+-prova-
+sprites
+reestruturar codigo
+fisica mais certa
+inimigo e tiro bater nas plataforma
+motor?
+terminar a estrutura do nivel 0 (pra ver q passa pra cima)

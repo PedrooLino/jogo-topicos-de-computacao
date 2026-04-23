@@ -40,14 +40,19 @@ class Enemy(GameObject):
 
         enemy_rect = pygame.Rect(self.x, self.y, self.width, self.height)
         for plat in platforms:
-            plat_rect = plat.rect  # <- aqui pegamos o rect do objeto Platform
-            if (enemy_rect.bottom - self.vel_y <= plat_rect.top and
-                enemy_rect.bottom >= plat_rect.top and
-                enemy_rect.right > plat_rect.left and
-                enemy_rect.left < plat_rect.right):
-                self.y = plat_rect.top - self.height
-                self.vel_y = 0
-                self.jumping = False
+            if enemy_rect.colliderect(plat.rect):
+                # CHECAR COLISÃO POR CIMA (Pisar na plataforma)
+                
+                if self.vel_y > 0 and enemy_rect.bottom - self.vel_y <= plat.rect.top:
+                    self.y = plat.rect.top - self.height
+                    self.vel_y = 0
+                    self.jumping = False
+                
+                # CHECAR COLISÃO LATERAL
+                else:
+                    self.speed *= -1 
+                    self.x += self.speed * 2 
+                    enemy_rect.x = self.x
 
         if self.y + self.height >= ground_y:
             self.y = ground_y - self.height

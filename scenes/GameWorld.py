@@ -89,7 +89,7 @@ class GameWorld(GameScene):
         for proj in self.player_projectiles[:]:
             proj.update()
 
-            hit = False  # ✅ controla se já acertou alguém
+            hit = False  
 
             for enemy in self.enemies:
                 enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
@@ -97,11 +97,30 @@ class GameWorld(GameScene):
                 if proj.get_rect().colliderect(enemy_rect):
                     enemy.take_damage(1)
                     hit = True
-                    break  # ✅ para no primeiro inimigo
+                    break  
 
             if hit:
                 if proj in self.player_projectiles:
                     self.player_projectiles.remove(proj)
+
+
+        # Para os projéteis do Player
+        for proj in self.player_projectiles[:]:
+            proj_rect = proj.get_rect()
+            for plat in self.platforms:
+                if proj_rect.colliderect(plat.rect):
+                    if proj in self.player_projectiles:
+                        self.player_projectiles.remove(proj)
+                    break 
+
+        # Para os projéteis dos Inimigos
+        for proj in self.enemy_projectiles[:]:
+            proj_rect = proj.get_rect()
+            for plat in self.platforms:
+                if proj_rect.colliderect(plat.rect):
+                    if proj in self.enemy_projectiles:
+                        self.enemy_projectiles.remove(proj)
+                    break
 
     def check_collisions(self):
         player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)

@@ -1,9 +1,10 @@
 import pygame
+from objects.enemies.TowerEnemy import TowerEnemy
 from scenes.GameScene import GameScene
-from objects.player import Player
-from objects.enemy import Enemy
-from objects.platform import Platform
-from levels.levels import LEVELS
+from objects.Player import Player
+from objects.enemies.Enemy import Enemy
+from objects.Platform import Platform
+from levels.Levels import LEVELS
 
 class GameWorld(GameScene):
 
@@ -40,8 +41,8 @@ class GameWorld(GameScene):
 
         if level == 0:
             self.enemies.append(Enemy(500, 800))
-        if level == 0:
             self.enemies.append(Enemy(600, 800))
+            self.enemies.append(TowerEnemy(1600, 500))
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -127,14 +128,14 @@ class GameWorld(GameScene):
 
         for proj in self.enemy_projectiles[:]:
             if proj.get_rect().colliderect(player_rect):
-                from scenes.death_menu import DeathMenu
+                from scenes.DeathMenu import DeathMenu
                 self.next_scene = DeathMenu()
                 return
 
         for enemy in self.enemies:
             enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
             if player_rect.colliderect(enemy_rect):
-                from scenes.death_menu import DeathMenu
+                from scenes.DeathMenu import DeathMenu
                 self.next_scene = DeathMenu()
                 return
             
@@ -160,7 +161,7 @@ class GameWorld(GameScene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                from scenes.main_menu import MainMenu
+                from scenes.MainMenu import MainMenu
                 self.next_scene = MainMenu()
 
     def render(self, screen):

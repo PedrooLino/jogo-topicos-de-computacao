@@ -1,5 +1,5 @@
 import pygame
-from objects.game_object import GameObject
+from objects.GameObject import GameObject
 
 class Projectile(GameObject):
     def __init__(self, x, y, direction):

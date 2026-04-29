@@ -1,6 +1,6 @@
 import pygame
-from objects.game_object import GameObject
-from objects.projectile import Projectile
+from objects.GameObject import GameObject
+from objects.Projectile import Projectile
 
 class Player(GameObject):
     
@@ -84,7 +84,7 @@ class Player(GameObject):
     def shoot(self, projectiles_list):
         now = pygame.time.get_ticks()
         if now - self.last_shot > self.shoot_delay:
-            from objects.projectile import Projectile
+            from objects.Projectile import Projectile
             proj = Projectile(
                 self.x + self.width // 2,
                 self.y + self.height // 2,

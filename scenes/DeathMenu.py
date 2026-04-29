@@ -10,7 +10,7 @@ class DeathMenu(GameScene):
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    from scenes.main_menu import MainMenu
+                    from scenes.MainMenu import MainMenu
                     self.next_scene = MainMenu()
 
     def update(self):

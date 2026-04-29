@@ -1,5 +1,6 @@
 import pygame
 from objects.enemies.TowerEnemy import TowerEnemy
+from objects.enemies.FlyEnemy import FlyEnemy
 from scenes.GameScene import GameScene
 from objects.Player import Player
 from objects.enemies.Enemy import Enemy
@@ -43,6 +44,8 @@ class GameWorld(GameScene):
             self.enemies.append(Enemy(500, 800))
             self.enemies.append(Enemy(600, 800))
             self.enemies.append(TowerEnemy(1600, 500))
+            self.enemies.append(FlyEnemy(200, 100))
+            self.enemies.append(FlyEnemy(1500, 300, speed=-1.2))
 
     def update(self):
         keys = pygame.key.get_pressed()
@@ -80,13 +83,13 @@ class GameWorld(GameScene):
 
     def update_projectiles(self):
         screen_width = pygame.display.get_surface().get_width()
-        # inimigos
+
         for proj in self.enemy_projectiles[:]:
             proj.update()
             if proj.x < 0 or proj.x > screen_width:
                 self.enemy_projectiles.remove(proj)
 
-        # player
+
         for proj in self.player_projectiles[:]:
             proj.update()
 
@@ -105,7 +108,7 @@ class GameWorld(GameScene):
                     self.player_projectiles.remove(proj)
 
 
-        # Para os projéteis do Player
+
         for proj in self.player_projectiles[:]:
             proj_rect = proj.get_rect()
             for plat in self.platforms:
@@ -114,7 +117,6 @@ class GameWorld(GameScene):
                         self.player_projectiles.remove(proj)
                     break 
 
-        # Para os projéteis dos Inimigos
         for proj in self.enemy_projectiles[:]:
             proj_rect = proj.get_rect()
             for plat in self.platforms:
@@ -139,7 +141,6 @@ class GameWorld(GameScene):
                 self.next_scene = DeathMenu()
                 return
             
-        # remover inimigos mortos o
         self.enemies = [enemy for enemy in self.enemies if enemy.alive]
 
     def handle_level_transitions(self):

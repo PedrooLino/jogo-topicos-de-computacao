@@ -11,9 +11,6 @@ class TowerEnemy(Enemy):
         self.shoot_delay = 800
 
     def update(self, platforms, ground_y, projectiles_list):
-        # NÃO anda
-
-        # ataque (mais forte - dois lados)
         now = pygame.time.get_ticks()
         if now - self.last_shot > self.shoot_delay:
             projectiles_list.append(
@@ -25,11 +22,9 @@ class TowerEnemy(Enemy):
 
             self.last_shot = now
 
-        # gravidade
         self.vel_y += self.gravity
         self.y += self.vel_y
 
-        # colisão
         enemy_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         for plat in platforms:
@@ -39,7 +34,6 @@ class TowerEnemy(Enemy):
                     self.vel_y = 0
                     self.jumping = False
 
-        # chão
         if self.y + self.height >= ground_y:
             self.y = ground_y - self.height
             self.vel_y = 0

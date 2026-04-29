@@ -3,7 +3,6 @@ moeda pra platinar (3)
 chave pra porta escondida pra uma "puzzle" room pa pega um poder
 boss terem a mesma pool drop
 boss serem tipo cuphead
-vida nos inimigo
 colocar um npc (espirito) pra explicar lore no começo de cada fase (colocar um mini altar nos lugares que ele aparece pra inicar o chat)
 arrumar o player passar pela plataforma caso ela seja alta
 
@@ -19,10 +18,7 @@ shield pa tankar 1x
 poder de dano dobrado (30s)
 
 -inimigos-
-arrumar matar um matar todos
-normal
 voador (voa)
-parado (fica numa plataforma parado e de vez em quando da um ataque)
 
 -fases-
 fase que tem um demônio la em cima atirando umas pedrona em tu

@@ -15,20 +15,18 @@ class Enemy(GameObject):
         self.hp = 3
         self.alive = True
 
-        self.color = color  # cor configurável
+        self.color = color 
 
         self.shoot_delay = 1500
         self.last_shot = pygame.time.get_ticks()
 
     def update(self, platforms, ground_y, projectiles_list):
-        # movimento horizontal
         self.x += self.speed
         screen_width = pygame.display.get_surface().get_width()
 
         if self.x + self.width > screen_width or self.x < 0:
             self.speed *= -1
 
-        # ataque
         now = pygame.time.get_ticks()
         if now - self.last_shot > self.shoot_delay:
             direction = 1 if self.speed > 0 else -1
@@ -41,11 +39,9 @@ class Enemy(GameObject):
             projectiles_list.append(new_proj)
             self.last_shot = now
 
-        # gravidade
         self.vel_y += self.gravity
         self.y += self.vel_y
 
-        # colisão
         enemy_rect = pygame.Rect(self.x, self.y, self.width, self.height)
 
         for plat in platforms:
@@ -59,7 +55,6 @@ class Enemy(GameObject):
                     self.x += self.speed * 2
                     enemy_rect.x = self.x
 
-        # chão
         if self.y + self.height >= ground_y:
             self.y = ground_y - self.height
             self.vel_y = 0

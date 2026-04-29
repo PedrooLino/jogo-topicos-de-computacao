@@ -18,7 +18,7 @@ class GameWorld(GameScene):
         self.player = Player(100, self.ground_y - 50)
         
 
-        self.level = 0
+        self.level = 1
         self.platforms = []
         self.enemies = []
         self.setup_level(self.level)

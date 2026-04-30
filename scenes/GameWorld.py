@@ -17,21 +17,20 @@ class GameWorld(GameScene):
         self.player_projectiles = []
         self.enemy_projectiles = []
 
+       
+        self.drops = []
+
         self.player = Player(100, self.ground_y - 50)
-        
 
         self.level = 1
         self.platforms = []
         self.enemies = []
         self.setup_level(self.level)
 
-        
-
-       
-
     def setup_level(self, level):
         self.platforms = []
         self.enemies = []
+        self.drops = []  
 
         if level not in LEVELS:
             print("Fim do jogo")
@@ -44,6 +43,7 @@ class GameWorld(GameScene):
             self.enemies.append(Enemy(500, 800))
             self.enemies.append(Enemy(600, 800))
             self.enemies.append(TowerEnemy(1600, 500))
+            self.enemies.append(TowerEnemy(1600, 1200))
             self.enemies.append(FlyEnemy(200, 100))
             self.enemies.append(FlyEnemy(1500, 300, speed=-1.2))
 
@@ -55,6 +55,7 @@ class GameWorld(GameScene):
         self.update_player()
         self.update_enemies()
         self.update_projectiles()
+        self.update_drops()
         self.check_collisions()
         self.handle_level_transitions()
 
@@ -70,8 +71,6 @@ class GameWorld(GameScene):
     def update_player(self):
         ground_y = self.ground_y if self.level == 0 else None
         self.player.update(self.platforms, ground_y)
-
-        
 
         # limitar na tela
         screen_width = pygame.display.get_surface().get_width()
@@ -89,11 +88,10 @@ class GameWorld(GameScene):
             if proj.x < 0 or proj.x > screen_width:
                 self.enemy_projectiles.remove(proj)
 
-
         for proj in self.player_projectiles[:]:
             proj.update()
 
-            hit = False  
+            hit = False
 
             for enemy in self.enemies:
                 enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
@@ -101,13 +99,18 @@ class GameWorld(GameScene):
                 if proj.get_rect().colliderect(enemy_rect):
                     enemy.take_damage(1)
                     hit = True
-                    break  
+
+                   
+                    if not enemy.alive:
+                        drop = enemy.try_drop()
+                        if drop:
+                            self.drops.append(drop)
+
+                    break
 
             if hit:
                 if proj in self.player_projectiles:
                     self.player_projectiles.remove(proj)
-
-
 
         for proj in self.player_projectiles[:]:
             proj_rect = proj.get_rect()
@@ -115,7 +118,7 @@ class GameWorld(GameScene):
                 if proj_rect.colliderect(plat.rect):
                     if proj in self.player_projectiles:
                         self.player_projectiles.remove(proj)
-                    break 
+                    break
 
         for proj in self.enemy_projectiles[:]:
             proj_rect = proj.get_rect()
@@ -124,6 +127,20 @@ class GameWorld(GameScene):
                     if proj in self.enemy_projectiles:
                         self.enemy_projectiles.remove(proj)
                     break
+
+    def update_drops(self):
+        ground_y = self.ground_y if self.level == 0 else None
+        player_rect = pygame.Rect(
+            self.player.x, self.player.y,
+            self.player.width, self.player.height
+        )
+
+        for drop in self.drops[:]:
+            drop.update(self.platforms, ground_y)
+
+            if drop.get_rect().colliderect(player_rect):
+                self.drops.remove(drop)
+                # efeito do drop será definido depois
 
     def check_collisions(self):
         player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
@@ -140,7 +157,7 @@ class GameWorld(GameScene):
                 from scenes.DeathMenu import DeathMenu
                 self.next_scene = DeathMenu()
                 return
-            
+
         self.enemies = [enemy for enemy in self.enemies if enemy.alive]
 
     def handle_level_transitions(self):
@@ -171,6 +188,10 @@ class GameWorld(GameScene):
         for plat in self.platforms:
             plat.draw(screen)
 
+        
+        for drop in self.drops:
+            drop.draw(screen)
+
         self.player.draw(screen)
         for enemy in self.enemies:
             enemy.draw(screen)
@@ -181,6 +202,6 @@ class GameWorld(GameScene):
         for proj in self.enemy_projectiles:
             proj.draw(screen)
 
-        # texto pa marca a fase q ta
+       
         text = self.font.render(f"Fase: {self.level}", True, (255, 255, 255))
         screen.blit(text, (350, 50))

@@ -5,6 +5,7 @@ boss terem a mesma pool drop
 boss serem tipo cuphead
 colocar um npc (espirito) pra explicar lore no começo de cada fase (colocar um mini altar nos lugares que ele aparece pra inicar o chat)
 arrumar o player passar pela plataforma caso ela seja alta
+arrumar herança gameobject
 
 -arma-
 inicial (tiro padrão, inf)
@@ -18,7 +19,6 @@ shield pa tankar 1x
 poder de dano dobrado (30s)
 
 -inimigos-
-voador (voa)
 
 -fases-
 fase que tem um demônio la em cima atirando umas pedrona em tu
@@ -34,6 +34,4 @@ O personagem veio de uma família exterminadora de demonios, mas nunca houve reg
 sprites
 reestruturar codigo
 fisica mais certa
-inimigo e tiro bater nas plataforma
 motor?
-terminar a estrutura do nivel 0 (pra ver q passa pra cima)

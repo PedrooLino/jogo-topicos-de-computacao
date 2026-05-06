@@ -6,6 +6,9 @@ from objects.Player import Player
 from objects.enemies.Enemy import Enemy
 from objects.Platform import Platform
 from levels.Levels import LEVELS
+from scenes.DeathMenu import DeathMenu
+from scenes.MainMenu import MainMenu
+
 
 class GameWorld(GameScene):
 
@@ -16,8 +19,6 @@ class GameWorld(GameScene):
 
         self.player_projectiles = []
         self.enemy_projectiles = []
-
-       
         self.drops = []
 
         self.player = Player(100, self.ground_y - 50)
@@ -25,12 +26,13 @@ class GameWorld(GameScene):
         self.level = 1
         self.platforms = []
         self.enemies = []
+
         self.setup_level(self.level)
 
     def setup_level(self, level):
         self.platforms = []
         self.enemies = []
-        self.drops = []  
+        self.drops = []
 
         if level not in LEVELS:
             print("Fim do jogo")
@@ -61,6 +63,7 @@ class GameWorld(GameScene):
 
     def handle_player_input(self, keys):
         self.player.handle_input(keys)
+
         if keys[pygame.K_SPACE]:
             self.player.shoot(self.player_projectiles)
 
@@ -72,7 +75,6 @@ class GameWorld(GameScene):
         ground_y = self.ground_y if self.level == 0 else None
         self.player.update(self.platforms, ground_y)
 
-        # limitar na tela
         screen_width = pygame.display.get_surface().get_width()
         self.player.x = max(0, min(self.player.x, screen_width - self.player.width))
 
@@ -94,13 +96,10 @@ class GameWorld(GameScene):
             hit = False
 
             for enemy in self.enemies:
-                enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
-
-                if proj.get_rect().colliderect(enemy_rect):
+                if proj.rect.colliderect(enemy.rect):
                     enemy.take_damage(1)
                     hit = True
 
-                   
                     if not enemy.alive:
                         drop = enemy.try_drop()
                         if drop:
@@ -108,57 +107,48 @@ class GameWorld(GameScene):
 
                     break
 
-            if hit:
-                if proj in self.player_projectiles:
-                    self.player_projectiles.remove(proj)
+            if hit and proj in self.player_projectiles:
+                self.player_projectiles.remove(proj)
 
         for proj in self.player_projectiles[:]:
-            proj_rect = proj.get_rect()
             for plat in self.platforms:
-                if proj_rect.colliderect(plat.rect):
+                if proj.rect.colliderect(plat.rect):
                     if proj in self.player_projectiles:
                         self.player_projectiles.remove(proj)
                     break
 
         for proj in self.enemy_projectiles[:]:
-            proj_rect = proj.get_rect()
             for plat in self.platforms:
-                if proj_rect.colliderect(plat.rect):
+                if proj.rect.colliderect(plat.rect):
                     if proj in self.enemy_projectiles:
                         self.enemy_projectiles.remove(proj)
                     break
 
     def update_drops(self):
         ground_y = self.ground_y if self.level == 0 else None
-        player_rect = pygame.Rect(
-            self.player.x, self.player.y,
-            self.player.width, self.player.height
-        )
+
+        player_rect = self.player.rect
 
         for drop in self.drops[:]:
             drop.update(self.platforms, ground_y)
 
-            if drop.get_rect().colliderect(player_rect):
+            if drop.rect.colliderect(player_rect):
                 self.drops.remove(drop)
-                # efeito do drop será definido depois
 
     def check_collisions(self):
-        player_rect = pygame.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
+        player_rect = self.player.rect
 
         for proj in self.enemy_projectiles[:]:
-            if proj.get_rect().colliderect(player_rect):
-                from scenes.DeathMenu import DeathMenu
+            if proj.rect.colliderect(player_rect):
                 self.next_scene = DeathMenu()
                 return
 
         for enemy in self.enemies:
-            enemy_rect = pygame.Rect(enemy.x, enemy.y, enemy.width, enemy.height)
-            if player_rect.colliderect(enemy_rect):
-                from scenes.DeathMenu import DeathMenu
+            if player_rect.colliderect(enemy.rect):
                 self.next_scene = DeathMenu()
                 return
 
-        self.enemies = [enemy for enemy in self.enemies if enemy.alive]
+        self.enemies = [e for e in self.enemies if e.alive]
 
     def handle_level_transitions(self):
         if self.player.y < 0:
@@ -179,7 +169,6 @@ class GameWorld(GameScene):
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                from scenes.MainMenu import MainMenu
                 self.next_scene = MainMenu()
 
     def render(self, screen):
@@ -188,11 +177,11 @@ class GameWorld(GameScene):
         for plat in self.platforms:
             plat.draw(screen)
 
-        
         for drop in self.drops:
             drop.draw(screen)
 
         self.player.draw(screen)
+
         for enemy in self.enemies:
             enemy.draw(screen)
 
@@ -202,6 +191,5 @@ class GameWorld(GameScene):
         for proj in self.enemy_projectiles:
             proj.draw(screen)
 
-       
         text = self.font.render(f"Fase: {self.level}", True, (255, 255, 255))
         screen.blit(text, (350, 50))

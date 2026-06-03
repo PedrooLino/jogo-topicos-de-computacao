@@ -27,8 +27,7 @@ class Vector2:
     def __neg__(self):
         return Vector2(-self.x, -self.y)
 
-    def __repr__(self):
-        return f"Vector2({self.x:.2f}, {self.y:.2f})"
+    
 
     # Utilitários
     def length(self):

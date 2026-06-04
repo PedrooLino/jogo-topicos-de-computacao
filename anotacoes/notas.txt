@@ -30,8 +30,11 @@ restam ruinas... Agora resta a você passar pelos demonios e seus servos e chega
 
 O personagem veio de uma família exterminadora de demonios, mas nunca houve registros de um caso sequer, até hoje.
 
--prova-
-sprites
-reestruturar codigo
-fisica mais certa
-motor?
+-ARRUMAR-
+coordenadas utlizar vetor (velocidade, força, etc)
+Reajustar o calculo de gravidade usando tempo
+Arrumar colisão em funcção de hitbox generica
+arrumar hierarquia de classes
+criar um modulo separado para tratar colisão
+classe intermediaria para tratar batalha
+

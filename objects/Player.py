@@ -1,19 +1,25 @@
 import pygame
-from objects.physics.Battleentity import BattleEntity # type: ignore
+from objects.physics.Battleentity import BattleEntity  # type: ignore
 from objects.Projectile import Projectile
 
-WALK_SPEED = 300    # px/s
-JUMP_SPEED = -720   # px/s
+WALK_SPEED = 300
+JUMP_SPEED = -720
 
 
 class Player(BattleEntity):
     def __init__(self, x, y, width=50, height=50):
-        super().__init__(x, y, width, height, hp=5, color=(255, 0, 0))
+        super().__init__(x, y, width, height, hp=5)
 
         self.walk_speed = WALK_SPEED
         self.jump_speed = JUMP_SPEED
         self.direction = 1
         self.shoot_delay = 500
+
+        self.image = pygame.image.load("sprites/personagem.png").convert_alpha()
+        self.image = pygame.transform.scale(self.image, (width, height))
+        self.image_left = pygame.transform.flip(self.image, True, False)
+
+        self.projectile_image = "sprites/tiro.png"
 
     def handle_input(self, keys):
         self.vel.x = 0
@@ -38,11 +44,21 @@ class Player(BattleEntity):
             plat.trigger()
 
     def shoot(self, projectiles_list):
+
         if self.can_shoot():
+
             projectiles_list.append(
                 Projectile(
                     self.pos.x + self.width // 2,
                     self.pos.y + self.height // 2,
-                    self.direction
+                    self.direction,
+                    image_path=self.projectile_image
                 )
             )
+
+    def draw(self, screen):
+
+        if self.direction == 1:
+            screen.blit(self.image, (self.pos.x, self.pos.y))
+        else:
+            screen.blit(self.image_left, (self.pos.x, self.pos.y))

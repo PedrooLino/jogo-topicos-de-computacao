@@ -2,7 +2,7 @@ import pygame
 from objects.physics.Battleentity import BattleEntity
 from objects.Projectile import Projectile
 
-PATROL_SPEED = 120  # px/s
+PATROL_SPEED = 120
 
 
 class Enemy(BattleEntity):
@@ -19,43 +19,50 @@ class Enemy(BattleEntity):
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(
             self.image, (self.width, self.height))
+        self.image_left = pygame.transform.flip(self.image, True, False)
+
+        self.projectile_image = "sprites/bolafogo.png"
 
     def update(self, platforms, ground_y, projectiles_list, dt):
         screen_width = pygame.display.get_surface().get_width()
 
         prev_x = self.pos.x
 
-
         self.apply_gravity(dt)
-
 
         self.pos.x += self.vel.x * dt
         self.resolve_x(platforms)
 
         moved = self.pos.x - prev_x
+
         if (self.vel.x > 0 and moved <= 0) or (self.vel.x < 0 and moved >= 0):
             self.vel.x *= -1
 
         self.pos.y += self.vel.y * dt
         self.resolve_y(platforms, ground_y)
 
-
         if self.pos.x + self.width >= screen_width or self.pos.x <= 0:
             self.vel.x *= -1
 
         if self.can_shoot():
+
             direction = 1 if self.vel.x > 0 else -1
 
             projectiles_list.append(
                 Projectile(
                     self.pos.x + self.width // 2,
                     self.pos.y + self.height // 2,
-                    direction
+                    direction,
+                    image_path=self.projectile_image
                 )
             )
 
     def draw(self, screen):
-        screen.blit(self.image, (self.pos.x, self.pos.y))
+
+        if self.vel.x > 0:
+            screen.blit(self.image, (self.pos.x, self.pos.y))
+        else:
+            screen.blit(self.image_left, (self.pos.x, self.pos.y))
 
     def _skip_platform(self, plat):
         return False

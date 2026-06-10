@@ -3,7 +3,7 @@ import math
 from objects.enemies.Enemy import Enemy
 from objects.Projectile import Projectile
 
-FLY_SPEED = 72 
+FLY_SPEED = 72
 
 
 class FlyEnemy(Enemy):
@@ -26,6 +26,9 @@ class FlyEnemy(Enemy):
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(
             self.image, (self.width, self.height))
+        self.image_left = pygame.transform.flip(self.image, True, False)
+
+        self.projectile_image = "sprites/bolafogo.png"
 
     def update(self, platforms, ground_y, projectiles_list, dt):
         screen_width = pygame.display.get_surface().get_width()
@@ -34,7 +37,7 @@ class FlyEnemy(Enemy):
 
         if self.pos.x + self.width >= screen_width or self.pos.x <= 0:
             self.vel.x *= -1
-
+            
         self.time += dt
         self.pos.y = self.base_y + self.amplitude * \
             math.sin(self.time * math.pi)
@@ -44,9 +47,14 @@ class FlyEnemy(Enemy):
                 Projectile(
                     self.pos.x + self.width // 2,
                     self.pos.y + self.height,
-                    0, 1
+                    0,
+                    1, 
+                    image_path=self.projectile_image
                 )
             )
 
     def draw(self, screen):
-        screen.blit(self.image, (self.pos.x, self.pos.y))
+        if self.vel.x > 0:
+            screen.blit(self.image_left, (self.pos.x, self.pos.y))
+        else:
+            screen.blit(self.image, (self.pos.x, self.pos.y))

@@ -15,24 +15,38 @@ class TowerEnemy(Enemy):
         self.shoot_delay = 800
         self.drop_chance = 0.6
 
-        # ---------------- SPRITE ----------------
         self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(
             self.image, (self.width, self.height))
 
+        self.projectile_image = "sprites/bolafogo.png"
+
     def update(self, platforms, ground_y, projectiles_list, dt):
 
-        # ---------------- ATAQUE ----------------
         if self.can_shoot():
+
             cx = self.pos.x + self.width // 2
             cy = self.pos.y + self.height // 2
 
-            projectiles_list.append(Projectile(cx, cy, 1))
-            projectiles_list.append(Projectile(cx, cy, -1))
+            projectiles_list.append(
+                Projectile(
+                    cx,
+                    cy,
+                    1,
+                    image_path=self.projectile_image
+                )
+            )
 
-        # ---------------- FÍSICA ----------------
+            projectiles_list.append(
+                Projectile(
+                    cx,
+                    cy,
+                    -1,
+                    image_path=self.projectile_image
+                )
+            )
+
         self.physics_update(dt, platforms, ground_y)
 
     def draw(self, screen):
-        # sprite segue a posição da física (sem mexer em rect manualmente)
         screen.blit(self.image, (self.pos.x, self.pos.y))

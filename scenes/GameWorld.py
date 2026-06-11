@@ -14,6 +14,7 @@ class GameWorld(GameScene):
 
     def __init__(self):
         super().__init__()
+
         self.font = pygame.font.SysFont("Arial", 40)
         self.ground_y = 1000
 
@@ -27,14 +28,22 @@ class GameWorld(GameScene):
         self.platforms = []
         self.enemies = []
 
-        # dt em segundos — calculado a cada frame
+        # ---------------- BACKGROUND ----------------
+        self.background = pygame.image.load("sprites/fundo.jpg").convert()
+
+        self.background = pygame.transform.scale(
+            self.background,
+            pygame.display.get_surface().get_size()
+        )
+
+        # ---------------- TIME ----------------
         self.dt = 0.0
         self._last_time = pygame.time.get_ticks()
 
         self.setup_level(self.level)
 
     # ------------------------------------------------------------------ #
-    #  Setup                                                               #
+    #  Setup                                                             #
     # ------------------------------------------------------------------ #
 
     def setup_level(self, level):
@@ -58,11 +67,10 @@ class GameWorld(GameScene):
             self.enemies.append(FlyEnemy(1500, 300, speed=-72))
 
     # ------------------------------------------------------------------ #
-    #  Loop principal                                                      #
+    #  LOOP                                                              #
     # ------------------------------------------------------------------ #
 
     def update(self):
-        # Calcula dt em segundos com cap de 100ms (evita saltos ao travar)
         now = pygame.time.get_ticks()
         self.dt = min((now - self._last_time) / 1000.0, 0.1)
         self._last_time = now
@@ -78,8 +86,6 @@ class GameWorld(GameScene):
         self.check_collisions()
         self.handle_level_transitions()
 
-    # ------------------------------------------------------------------ #
-    #  Sub-updates                                                         #
     # ------------------------------------------------------------------ #
 
     def handle_player_input(self, keys):
@@ -101,20 +107,22 @@ class GameWorld(GameScene):
 
     def update_enemies(self):
         for enemy in self.enemies:
-            enemy.update(self.platforms, self.ground_y,
-                         self.enemy_projectiles, self.dt)
+            enemy.update(
+                self.platforms,
+                self.ground_y,
+                self.enemy_projectiles,
+                self.dt
+            )
 
     def update_projectiles(self):
         screen_width = pygame.display.get_surface().get_width()
         dt = self.dt
 
-        # Projéteis inimigos — mover e remover fora da tela
         for proj in self.enemy_projectiles[:]:
             proj.update(dt)
             if proj.x < 0 or proj.x > screen_width:
                 self.enemy_projectiles.remove(proj)
 
-        # Projéteis do player — mover, checar hit em inimigos
         for proj in self.player_projectiles[:]:
             proj.update(dt)
 
@@ -130,23 +138,19 @@ class GameWorld(GameScene):
                             self.drops.append(drop)
                     break
 
-            if hit and proj in self.player_projectiles:
+            if hit:
                 self.player_projectiles.remove(proj)
                 continue
 
-            # Colisão com plataformas
             for plat in self.platforms:
                 if proj.rect.colliderect(plat.rect):
-                    if proj in self.player_projectiles:
-                        self.player_projectiles.remove(proj)
+                    self.player_projectiles.remove(proj)
                     break
 
-        # Projéteis inimigos — colisão com plataformas
         for proj in self.enemy_projectiles[:]:
             for plat in self.platforms:
                 if proj.rect.colliderect(plat.rect):
-                    if proj in self.enemy_projectiles:
-                        self.enemy_projectiles.remove(proj)
+                    self.enemy_projectiles.remove(proj)
                     break
 
     def update_drops(self):
@@ -157,10 +161,7 @@ class GameWorld(GameScene):
 
             if drop.rect.colliderect(self.player.rect):
                 self.drops.remove(drop)
-                # efeito do drop será definido depois
 
-    # ------------------------------------------------------------------ #
-    #  Colisões e transições                                               #
     # ------------------------------------------------------------------ #
 
     def check_collisions(self):
@@ -195,16 +196,18 @@ class GameWorld(GameScene):
             self.player.on_ground = True
 
     # ------------------------------------------------------------------ #
-    #  Eventos e render                                                    #
-    # ------------------------------------------------------------------ #
 
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.next_scene = MainMenu()
 
+    # ------------------------------------------------------------------ #
+
     def render(self, screen):
-        screen.fill((20, 120, 20))
+
+        # FUNDO PRIMEIRO (sempre)
+        screen.blit(self.background, (0, 0))
 
         for plat in self.platforms:
             plat.draw(screen)

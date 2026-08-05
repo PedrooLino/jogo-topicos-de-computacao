@@ -14,6 +14,7 @@ class FlyEnemy(Enemy):
 
         super().__init__(x, y, speed=speed, color=(128, 0, 128))
 
+        self.points = 15
         self.base_y = float(y)
         self.amplitude = amplitude
         self.time = 0.0

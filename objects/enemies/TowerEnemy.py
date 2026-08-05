@@ -10,6 +10,7 @@ class TowerEnemy(Enemy):
 
         super().__init__(x, y, speed=0, color=color)
 
+        self.points = 30
         self.vel.x = 0
         self.hp = 5
         self.shoot_delay = 800

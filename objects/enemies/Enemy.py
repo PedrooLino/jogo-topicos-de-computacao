@@ -12,6 +12,7 @@ class Enemy(BattleEntity):
 
         super().__init__(x, y, width, height, hp=3, color=color)
 
+        self.points = 10
         self.vel.x = speed
         self.shoot_delay = 1500
         self.drop_chance = 0.1

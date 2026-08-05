@@ -24,6 +24,7 @@ class GameWorld(GameScene):
 
         self.player = Player(100, self.ground_y - 50)
 
+        self.score = 0
         self.level = 1
         self.platforms = []
         self.enemies = []
@@ -127,15 +128,19 @@ class GameWorld(GameScene):
             proj.update(dt)
 
             hit = False
+
             for enemy in self.enemies:
                 if proj.rect.colliderect(enemy.rect):
                     enemy.take_damage(1)
                     hit = True
 
                     if not enemy.alive:
+                        self.score += enemy.points
+
                         drop = enemy.try_drop()
                         if drop:
                             self.drops.append(drop)
+
                     break
 
             if hit:
@@ -206,7 +211,6 @@ class GameWorld(GameScene):
 
     def render(self, screen):
 
-        # FUNDO PRIMEIRO (sempre)
         screen.blit(self.background, (0, 0))
 
         for plat in self.platforms:
@@ -226,5 +230,25 @@ class GameWorld(GameScene):
         for proj in self.enemy_projectiles:
             proj.draw(screen)
 
-        text = self.font.render(f"Fase: {self.level}", True, (255, 255, 255))
-        screen.blit(text, (350, 50))
+        # Fase
+        level_text = self.font.render(
+            f"Fase: {self.level}",
+            True,
+            (255, 255, 255)
+        )
+        screen.blit(level_text, (20, 20))
+
+        # Pontuação
+        score_text = self.font.render(
+            f"Pontos: {self.score}",
+            True,
+            (139, 0, 0)
+        )
+
+        screen.blit(
+            score_text,
+            (
+                screen.get_width() - score_text.get_width() - 20,
+                20
+            )
+        )

@@ -38,3 +38,8 @@ arrumar hierarquia de classes
 criar um modulo separado para tratar colisão
 classe intermediaria para tratar batalha
 
+-colocar-
+audio, efeitos sonoros, musica fundo
+sprite/animacao
+pontos
+todas as features que se espera do jogo proposto

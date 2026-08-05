@@ -2,8 +2,9 @@ import pygame
 from scenes.GameScene import GameScene
 
 class MainMenu(GameScene):
-    def __init__(self):
+    def __init__(self, audio):
         super().__init__()
+        self.audio = audio
         self.font = pygame.font.SysFont("Arial", 32)
         self.title_font = pygame.font.SysFont("Arial", 64)
         self.background = pygame.image.load("sprites/Guerra_menu.png").convert()
@@ -14,7 +15,7 @@ class MainMenu(GameScene):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     from scenes.GameWorld import GameWorld
-                    self.next_scene = GameWorld()
+                    self.next_scene = GameWorld(self.audio)
 
     def update(self):
         pass

@@ -12,9 +12,10 @@ from scenes.MainMenu import MainMenu
 
 class GameWorld(GameScene):
 
-    def __init__(self):
+    def __init__(self, audio):
         super().__init__()
 
+        self.audio = audio
         self.font = pygame.font.SysFont("Arial", 40)
         self.ground_y = 1000
 
@@ -135,8 +136,14 @@ class GameWorld(GameScene):
                     hit = True
 
                     if not enemy.alive:
+
+                        # toca o som de morte
+                        self.audio.play_enemy_die()
+
+                        # adiciona pontos
                         self.score += enemy.points
 
+                        # cria drop
                         drop = enemy.try_drop()
                         if drop:
                             self.drops.append(drop)

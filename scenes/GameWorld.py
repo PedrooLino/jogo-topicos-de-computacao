@@ -26,7 +26,7 @@ class GameWorld(GameScene):
 
         self.player = Player(100, self.ground_y - 50, self.audio)
         self.score = 0
-        self.level = 1
+        self.level = 2
         self.platforms = []
         self.enemies = []
 

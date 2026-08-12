@@ -7,15 +7,17 @@ JUMP_SPEED = -720
 
 
 class Player(BattleEntity):
-    def __init__(self, x, y, width=50, height=50):
+    def __init__(self, x, y, audio, width=50, height=50):
         super().__init__(x, y, width, height, hp=5)
 
+        self.audio = audio  
         self.walk_speed = WALK_SPEED
         self.jump_speed = JUMP_SPEED
         self.direction = 1
         self.shoot_delay = 500
 
-        self.image = pygame.image.load("sprites/personagem.png").convert_alpha()
+        self.image = pygame.image.load(
+            "sprites/personagem.png").convert_alpha()
         self.image = pygame.transform.scale(self.image, (width, height))
         self.image_left = pygame.transform.flip(self.image, True, False)
 
@@ -44,9 +46,7 @@ class Player(BattleEntity):
             plat.trigger()
 
     def shoot(self, projectiles_list):
-
         if self.can_shoot():
-
             projectiles_list.append(
                 Projectile(
                     self.pos.x + self.width // 2,
@@ -55,6 +55,9 @@ class Player(BattleEntity):
                     image_path=self.projectile_image
                 )
             )
+            
+            if self.audio:
+                self.audio.play_player_shoot()
 
     def draw(self, screen):
 

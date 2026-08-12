@@ -6,7 +6,7 @@ from objects.Projectile import Projectile
 class TowerEnemy(Enemy):
     def __init__(self, x, y,
                  image_path="sprites/DemonioTorre.png",
-                 color=(0, 255, 0)):
+                 color=(0, 255, 0),audio=None):
 
         super().__init__(x, y, speed=0, color=color)
 
@@ -37,6 +37,8 @@ class TowerEnemy(Enemy):
                     image_path=self.projectile_image
                 )
             )
+            if self.audio:
+                self.audio.play_enemy_shoot()
 
             projectiles_list.append(
                 Projectile(

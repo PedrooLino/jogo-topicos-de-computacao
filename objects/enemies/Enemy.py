@@ -8,10 +8,11 @@ PATROL_SPEED = 120
 class Enemy(BattleEntity):
     def __init__(self, x, y, width=50, height=50,
                  speed=PATROL_SPEED, color=(0, 0, 255),
-                 image_path="sprites/Demonio.png"):
+                 image_path="sprites/Demonio.png", audio=None):
 
         super().__init__(x, y, width, height, hp=3, color=color)
 
+        self.audio = audio
         self.points = 10
         self.vel.x = speed
         self.shoot_delay = 1500
@@ -57,6 +58,8 @@ class Enemy(BattleEntity):
                     image_path=self.projectile_image
                 )
             )
+            if self.audio:
+                self.audio.play_enemy_shoot()
 
     def draw(self, screen):
 

@@ -16,6 +16,7 @@ class GameWorld(GameScene):
         super().__init__()
 
         self.audio = audio
+        self.audio.play_background_music()
         self.font = pygame.font.SysFont("Arial", 40)
         self.ground_y = 1000
 
@@ -23,8 +24,7 @@ class GameWorld(GameScene):
         self.enemy_projectiles = []
         self.drops = []
 
-        self.player = Player(100, self.ground_y - 50)
-
+        self.player = Player(100, self.ground_y - 50, self.audio)
         self.score = 0
         self.level = 1
         self.platforms = []
@@ -61,12 +61,13 @@ class GameWorld(GameScene):
             self.platforms.append(Platform(*data))
 
         if level == 0:
-            self.enemies.append(Enemy(500, 800))
-            self.enemies.append(Enemy(600, 800))
-            self.enemies.append(TowerEnemy(1600, 500))
-            self.enemies.append(TowerEnemy(1600, 1200))
-            self.enemies.append(FlyEnemy(200, 100))
-            self.enemies.append(FlyEnemy(1500, 300, speed=-72))
+            self.enemies.append(Enemy(500, 800, audio=self.audio))
+            self.enemies.append(Enemy(600, 800, audio=self.audio))
+            self.enemies.append(TowerEnemy(1600, 500, audio=self.audio))
+            self.enemies.append(TowerEnemy(1600, 1200, audio=self.audio))
+            self.enemies.append(FlyEnemy(200, 100, audio=self.audio))
+            self.enemies.append(
+                FlyEnemy(1500, 300, speed=-72, audio=self.audio))
 
     # ------------------------------------------------------------------ #
     #  LOOP                                                              #

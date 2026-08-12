@@ -10,7 +10,7 @@ class FlyEnemy(Enemy):
     def __init__(self, x, y,
                  speed=FLY_SPEED,
                  amplitude=50,
-                 image_path="sprites/DemonioVoador.png"):
+                 image_path="sprites/DemonioVoador.png", audio=None):
 
         super().__init__(x, y, speed=speed, color=(128, 0, 128))
 
@@ -53,6 +53,8 @@ class FlyEnemy(Enemy):
                     image_path=self.projectile_image
                 )
             )
+            if self.audio:
+                self.audio.play_enemy_shoot()
 
     def draw(self, screen):
         if self.vel.x > 0:

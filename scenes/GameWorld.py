@@ -1,6 +1,7 @@
 import pygame
 from objects.enemies.TowerEnemy import TowerEnemy
 from objects.enemies.FlyEnemy import FlyEnemy
+from objects.enemies.Boss import Boss
 from scenes.GameScene import GameScene
 from objects.Player import Player
 from objects.enemies.Enemy import Enemy
@@ -8,7 +9,6 @@ from objects.Platform import Platform
 from levels.Levels import LEVELS
 from scenes.DeathMenu import DeathMenu
 from scenes.MainMenu import MainMenu
-
 
 class GameWorld(GameScene):
 
@@ -68,6 +68,8 @@ class GameWorld(GameScene):
             self.enemies.append(FlyEnemy(200, 100, audio=self.audio))
             self.enemies.append(
                 FlyEnemy(1500, 300, speed=-72, audio=self.audio))
+        if level == 2:
+            self.enemies.append(Boss(1000,800,self.player,audio=self.audio))
 
     # ------------------------------------------------------------------ #
     #  LOOP                                                              #
@@ -182,15 +184,18 @@ class GameWorld(GameScene):
 
         for proj in self.enemy_projectiles:
             if proj.rect.colliderect(player_rect):
-                self.next_scene = DeathMenu()
+                self.next_scene = DeathMenu(self.audio)
                 return
 
         for enemy in self.enemies:
             if player_rect.colliderect(enemy.rect):
-                self.next_scene = DeathMenu()
+                self.next_scene = DeathMenu(self.audio)
                 return
 
-        self.enemies = [e for e in self.enemies if e.alive]
+        self.enemies = [
+            e for e in self.enemies
+            if e.alive
+        ]
 
     def handle_level_transitions(self):
         if self.player.y < 0:

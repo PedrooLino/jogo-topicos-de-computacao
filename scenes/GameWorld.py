@@ -8,14 +8,18 @@ from objects.enemies.Enemy import Enemy
 from objects.Platform import Platform
 from levels.Levels import LEVELS
 from scenes.DeathMenu import DeathMenu
-from scenes.MainMenu import MainMenu
+from scenes.PauseMenu import PauseMenu
+
 
 class GameWorld(GameScene):
 
-    def __init__(self, audio):
+
+    def __init__(self, audio, scene_manager):
         super().__init__()
 
         self.audio = audio
+        self.scene_manager = scene_manager
+
         self.audio.play_background_music()
         self.font = pygame.font.SysFont("Arial", 40)
         self.ground_y = 1000
@@ -184,18 +188,33 @@ class GameWorld(GameScene):
 
         for proj in self.enemy_projectiles:
             if proj.rect.colliderect(player_rect):
-                self.next_scene = DeathMenu(self.audio)
+
+                self.scene_manager.push(
+                    DeathMenu(
+                        self.audio,
+                        self.scene_manager
+                    )
+                )
+
                 return
 
         for enemy in self.enemies:
             if player_rect.colliderect(enemy.rect):
-                self.next_scene = DeathMenu(self.audio)
+
+                self.scene_manager.push(
+                    DeathMenu(
+                        self.audio,
+                        self.scene_manager
+                    )
+                )
+
                 return
 
         self.enemies = [
             e for e in self.enemies
             if e.alive
         ]
+
 
     def handle_level_transitions(self):
         if self.player.y < 0:
@@ -215,10 +234,15 @@ class GameWorld(GameScene):
 
     # ------------------------------------------------------------------ #
 
+
     def handle_events(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                self.next_scene = MainMenu()
+                self.scene_manager.push(
+                    PauseMenu(self.audio, self.scene_manager)
+                )
+
+
 
     # ------------------------------------------------------------------ #
 

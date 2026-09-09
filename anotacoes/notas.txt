@@ -43,3 +43,11 @@ audio, efeitos sonoros, musica fundo
 sprite/animacao
 pontos
 todas as features que se espera do jogo proposto
+
+
+
+coordenadas utlizar vetor (velocidade, força, etc) 
+Arrumar colisão em funcção de hitbox generica 
+criar um modulo separado para tratar colisão 
+fazer classe de sprite, animacao e conjunto de animacao 
+fisica (x.y)

@@ -2,35 +2,31 @@ import pygame
 from scenes.GameScene import GameScene
 
 
-class MainMenu(GameScene):
+class PauseMenu(GameScene):
+
     def __init__(self, audio, scene_manager):
         super().__init__()
 
         self.audio = audio
         self.scene_manager = scene_manager
 
-
         self.font = pygame.font.SysFont(
             "Courier New",
-            20,
+            24,
             bold=True
         )
 
         self.title_font = pygame.font.SysFont(
             "Courier New",
-            72,
+            60,
             bold=True
         )
 
-        self.background = pygame.image.load(
-            "sprites/Guerra_menu.png"
-        ).convert()
-
-        self.button_width = 260
+        self.button_width = 300
         self.button_height = 65
-        self.button_gap = 35
+        self.button_gap = 30
 
-        self.selected_button = None
+        self.selected_button = 0
 
     def handle_events(self, events):
 
@@ -38,28 +34,27 @@ class MainMenu(GameScene):
 
             if event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_UP:
-                    if self.selected_button is None:
-                        self.selected_button = 0
-                    else:
-                        self.selected_button = (
-                            self.selected_button - 1
-                        ) % 3
+                # ESC = continuar
+                if event.key == pygame.K_ESCAPE:
+                    self.continue_game()
+
+                elif event.key == pygame.K_UP:
+
+                    self.selected_button = (
+                        self.selected_button - 1
+                    ) % 3
 
                 elif event.key == pygame.K_DOWN:
-                    if self.selected_button is None:
-                        self.selected_button = 0
-                    else:
-                        self.selected_button = (
-                            self.selected_button + 1
-                        ) % 3
+
+                    self.selected_button = (
+                        self.selected_button + 1
+                    ) % 3
 
                 elif event.key in (
                     pygame.K_RETURN,
                     pygame.K_SPACE
                 ):
-                    if self.selected_button is not None:
-                        self.activate_button()
+                    self.activate_button()
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
 
@@ -67,15 +62,15 @@ class MainMenu(GameScene):
 
                     mouse_pos = pygame.mouse.get_pos()
 
-                    start_rect, credits_rect, exit_rect = (
+                    continue_rect, menu_rect, exit_rect = (
                         self.get_button_rects()
                     )
 
-                    if start_rect.collidepoint(mouse_pos):
-                        self.start_game()
+                    if continue_rect.collidepoint(mouse_pos):
+                        self.continue_game()
 
-                    elif credits_rect.collidepoint(mouse_pos):
-                        self.show_credits()
+                    elif menu_rect.collidepoint(mouse_pos):
+                        self.main_menu()
 
                     elif exit_rect.collidepoint(mouse_pos):
                         self.exit_game()
@@ -83,29 +78,31 @@ class MainMenu(GameScene):
     def activate_button(self):
 
         if self.selected_button == 0:
-            self.start_game()
+            self.continue_game()
 
         elif self.selected_button == 1:
-            self.show_credits()
+            self.main_menu()
 
         elif self.selected_button == 2:
             self.exit_game()
 
-    
-    def start_game(self):
+    def continue_game(self):
 
-        from scenes.GameWorld import GameWorld
+        self.scene_manager.pop()
+
+    def main_menu(self):
+
+        from scenes.MainMenu import MainMenu
+
+        self.scene_manager.clear()
 
         self.scene_manager.push(
-            GameWorld(self.audio, self.scene_manager)
+            MainMenu(
+                self.audio,
+                self.scene_manager
+            )
         )
 
-
-    def show_credits(self):
-
-        from scenes.CreditsScene import CreditsScene
-
-        self.next_scene = CreditsScene(self.audio)
 
     def exit_game(self):
 
@@ -127,16 +124,18 @@ class MainMenu(GameScene):
             screen_height - total_height
         ) // 2
 
-        button_x = int(screen_width * 0.18)
+        button_x = (
+            screen_width - self.button_width
+        ) // 2
 
-        start_rect = pygame.Rect(
+        continue_rect = pygame.Rect(
             button_x,
             start_y,
             self.button_width,
             self.button_height
         )
 
-        credits_rect = pygame.Rect(
+        menu_rect = pygame.Rect(
             button_x,
             start_y
             + self.button_height
@@ -153,7 +152,7 @@ class MainMenu(GameScene):
             self.button_height
         )
 
-        return start_rect, credits_rect, exit_rect
+        return continue_rect, menu_rect, exit_rect
 
     def update(self):
         pass
@@ -177,6 +176,7 @@ class MainMenu(GameScene):
         if mouse_over:
             draw_rect.x -= 15
 
+        # Sombra
         shadow_rect = draw_rect.copy()
 
         shadow_rect.x += 8
@@ -245,26 +245,35 @@ class MainMenu(GameScene):
 
     def render(self, screen):
 
-        screen_width, screen_height = screen.get_size()
+        # Primeiro desenha o jogo que está atrás
+        previous_scene = self.scene_manager.scenes[-2]
 
-        background_scaled = pygame.transform.scale(
-            self.background,
-            (screen_width, screen_height)
-        )
+        previous_scene.render(screen)
+
+        # Escurece a tela
+        overlay = pygame.Surface(screen.get_size())
+
+        overlay.set_alpha(160)
+
+        overlay.fill((0, 0, 0))
 
         screen.blit(
-            background_scaled,
+            overlay,
             (0, 0)
         )
 
+        # Título
         title_surf = self.title_font.render(
-            "GUERRA",
+            "PAUSADO",
             True,
             (255, 255, 255)
         )
 
         title_rect = title_surf.get_rect(
-            topleft=(120, 80)
+            center=(
+                screen.get_width() // 2,
+                120
+            )
         )
 
         screen.blit(
@@ -272,21 +281,22 @@ class MainMenu(GameScene):
             title_rect
         )
 
-        start_rect, credits_rect, exit_rect = (
+        # Botões
+        continue_rect, menu_rect, exit_rect = (
             self.get_button_rects()
         )
 
         self.render_button(
             screen,
-            start_rect,
-            "COMEÇAR",
+            continue_rect,
+            "CONTINUAR",
             self.selected_button == 0
         )
 
         self.render_button(
             screen,
-            credits_rect,
-            "CRÉDITOS",
+            menu_rect,
+            "MENU PRINCIPAL",
             self.selected_button == 1
         )
 

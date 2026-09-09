@@ -105,7 +105,13 @@ class MainMenu(GameScene):
 
         from scenes.CreditsScene import CreditsScene
 
-        self.next_scene = CreditsScene(self.audio)
+        self.scene_manager.push(
+            CreditsScene(
+                self.audio,
+                self.scene_manager
+            )
+        )
+
 
     def exit_game(self):
 

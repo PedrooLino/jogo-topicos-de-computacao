@@ -25,10 +25,10 @@ class GameManager:
 
         self.audio = AudioManager()
 
-        # Cria o gerenciador de cenas
         self.scene_manager = SceneManager()
-
-        # Coloca o menu principal na pilha
+        
+        
+        
         self.scene_manager.push(
             MainMenu(self.audio, self.scene_manager)
         )
@@ -45,14 +45,11 @@ class GameManager:
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            # Cena que estava ativa antes dos eventos
             current_scene = self.scene_manager.current()
 
             current_scene.handle_events(events)
 
-            # Pega novamente a cena atual.
-            # Isso é importante porque o handle_events
-            # pode ter alterado a pilha.
+
             current_scene = self.scene_manager.current()
 
             current_scene.update()

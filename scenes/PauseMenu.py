@@ -245,12 +245,12 @@ class PauseMenu(GameScene):
 
     def render(self, screen):
 
-        # Primeiro desenha o jogo que está atrás
+
         previous_scene = self.scene_manager.scenes[-2]
 
         previous_scene.render(screen)
 
-        # Escurece a tela
+        #escurece
         overlay = pygame.Surface(screen.get_size())
 
         overlay.set_alpha(160)
@@ -281,7 +281,6 @@ class PauseMenu(GameScene):
             title_rect
         )
 
-        # Botões
         continue_rect, menu_rect, exit_rect = (
             self.get_button_rects()
         )

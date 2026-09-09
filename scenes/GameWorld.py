@@ -34,7 +34,7 @@ class GameWorld(GameScene):
         self.platforms = []
         self.enemies = []
 
-        # ---------------- BACKGROUND ----------------
+
         self.background = pygame.image.load("sprites/fundo.jpg").convert()
 
         self.background = pygame.transform.scale(
@@ -42,15 +42,13 @@ class GameWorld(GameScene):
             pygame.display.get_surface().get_size()
         )
 
-        # ---------------- TIME ----------------
+
         self.dt = 0.0
         self._last_time = pygame.time.get_ticks()
 
         self.setup_level(self.level)
 
-    # ------------------------------------------------------------------ #
-    #  Setup                                                             #
-    # ------------------------------------------------------------------ #
+
 
     def setup_level(self, level):
         self.platforms = []
@@ -75,9 +73,7 @@ class GameWorld(GameScene):
         if level == 2:
             self.enemies.append(Boss(1000,800,self.player,audio=self.audio))
 
-    # ------------------------------------------------------------------ #
-    #  LOOP                                                              #
-    # ------------------------------------------------------------------ #
+
 
     def update(self):
         now = pygame.time.get_ticks()
@@ -144,13 +140,13 @@ class GameWorld(GameScene):
 
                     if not enemy.alive:
 
-                        # toca o som de morte
+                        #som de morte
                         self.audio.play_enemy_die()
 
-                        # adiciona pontos
+                        #pontos
                         self.score += enemy.points
 
-                        # cria drop
+                        #drop
                         drop = enemy.try_drop()
                         if drop:
                             self.drops.append(drop)
@@ -181,7 +177,7 @@ class GameWorld(GameScene):
             if drop.rect.colliderect(self.player.rect):
                 self.drops.remove(drop)
 
-    # ------------------------------------------------------------------ #
+
 
     def check_collisions(self):
         player_rect = self.player.rect
@@ -232,7 +228,7 @@ class GameWorld(GameScene):
             self.player.vel_y = 0
             self.player.on_ground = True
 
-    # ------------------------------------------------------------------ #
+
 
 
     def handle_events(self, events):
@@ -243,8 +239,6 @@ class GameWorld(GameScene):
                 )
 
 
-
-    # ------------------------------------------------------------------ #
 
     def render(self, screen):
 
@@ -267,7 +261,7 @@ class GameWorld(GameScene):
         for proj in self.enemy_projectiles:
             proj.draw(screen)
 
-        # Fase
+        #fase
         level_text = self.font.render(
             f"Fase: {self.level}",
             True,
@@ -275,7 +269,7 @@ class GameWorld(GameScene):
         )
         screen.blit(level_text, (20, 20))
 
-        # Pontuação
+        #ponyo
         score_text = self.font.render(
             f"Pontos: {self.score}",
             True,

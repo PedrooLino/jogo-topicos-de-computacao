@@ -28,7 +28,7 @@ class DeathMenu(GameScene):
 
         self.selected_button = 1
 
-    # ------------------------------------------------------------ #
+
 
     def handle_events(self, events):
 
@@ -74,7 +74,7 @@ class DeathMenu(GameScene):
                     elif menu_rect.collidepoint(mouse_pos):
                         self.main_menu()
 
-    # ------------------------------------------------------------ #
+
 
     def activate_button(self):
 
@@ -87,7 +87,7 @@ class DeathMenu(GameScene):
         elif self.selected_button == 2:
             self.main_menu()
 
-    # ------------------------------------------------------------ #
+
 
     def show_credits(self):
 
@@ -100,16 +100,15 @@ class DeathMenu(GameScene):
             )
         )
 
-    # ------------------------------------------------------------ #
+
 
     def try_again(self):
 
         from scenes.GameWorld import GameWorld
 
-        # Remove o DeathMenu
         self.scene_manager.pop()
 
-        # Começa uma nova partida
+
         self.scene_manager.push(
             GameWorld(
                 self.audio,
@@ -117,16 +116,16 @@ class DeathMenu(GameScene):
             )
         )
 
-    # ------------------------------------------------------------ #
+
 
     def main_menu(self):
 
         from scenes.MainMenu import MainMenu
 
-        # Limpa todas as cenas
+
         self.scene_manager.clear()
 
-        # Cria o menu principal
+
         self.scene_manager.push(
             MainMenu(
                 self.audio,
@@ -134,7 +133,7 @@ class DeathMenu(GameScene):
             )
         )
 
-    # ------------------------------------------------------------ #
+
 
     def get_button_rects(self):
 
@@ -181,12 +180,12 @@ class DeathMenu(GameScene):
 
         return credits_rect, retry_rect, menu_rect
 
-    # ------------------------------------------------------------ #
+
 
     def update(self):
         pass
 
-    # ------------------------------------------------------------ #
+
 
     def render_button(
         self,
@@ -207,7 +206,6 @@ class DeathMenu(GameScene):
         if mouse_over:
             draw_rect.x -= 15
 
-        # Sombra
         shadow_rect = draw_rect.copy()
 
         shadow_rect.x += 8
@@ -274,13 +272,12 @@ class DeathMenu(GameScene):
                 ]
             )
 
-    # ------------------------------------------------------------ #
 
     def render(self, screen):
 
         screen.fill((0, 0, 0))
 
-        # Título
+
         title_surf = self.title_font.render(
             "VOCÊ MORREU",
             True,
@@ -299,9 +296,9 @@ class DeathMenu(GameScene):
             title_rect
         )
 
-        # Subtítulo
+
         subtitle_surf = self.font.render(
-            "Você sucumbiu à escuridão...",
+            "Sucumbiu à escuridão...",
             True,
             (210, 210, 210)
         )
@@ -318,7 +315,6 @@ class DeathMenu(GameScene):
             subtitle_rect
         )
 
-        # Botões
         credits_rect, retry_rect, menu_rect = (
             self.get_button_rects()
         )

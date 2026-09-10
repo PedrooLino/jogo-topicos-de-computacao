@@ -1,5 +1,7 @@
 import pygame
-from objects.physics.Battleentity import BattleEntity  # type: ignore
+from objects.physics.Battleentity import BattleEntity
+from objects.physics.Vector2 import Vector2
+from objects.graphics.AnimationSet import AnimationSet
 from objects.Projectile import Projectile
 
 WALK_SPEED = 300
@@ -10,16 +12,16 @@ class Player(BattleEntity):
     def __init__(self, x, y, audio, width=50, height=50):
         super().__init__(x, y, width, height, hp=5)
 
-        self.audio = audio  
+        self.audio = audio
         self.walk_speed = WALK_SPEED
         self.jump_speed = JUMP_SPEED
-        self.direction = 1
+        self.direction = Vector2(1, 0)
         self.shoot_delay = 500
 
-        self.image = pygame.image.load(
-            "sprites/personagem.png").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (width, height))
-        self.image_left = pygame.transform.flip(self.image, True, False)
+        self.animations = AnimationSet()
+        self.animations.add_animation(
+            "idle", "sprites/personagem.png", self.width, self.height
+        )
 
         self.projectile_image = "sprites/tiro.png"
 
@@ -28,11 +30,11 @@ class Player(BattleEntity):
 
         if keys[pygame.K_a]:
             self.vel.x = -self.walk_speed
-            self.direction = -1
+            self.direction = Vector2(-1, 0)
 
         if keys[pygame.K_d]:
             self.vel.x = self.walk_speed
-            self.direction = 1
+            self.direction = Vector2(1, 0)
 
         if keys[pygame.K_w] and self.on_ground:
             self.vel.y = self.jump_speed
@@ -51,17 +53,15 @@ class Player(BattleEntity):
                 Projectile(
                     self.pos.x + self.width // 2,
                     self.pos.y + self.height // 2,
-                    self.direction,
+                    direction=self.direction,
                     image_path=self.projectile_image
                 )
             )
-            
+
             if self.audio:
                 self.audio.play_player_shoot()
 
     def draw(self, screen):
-
-        if self.direction == 1:
-            screen.blit(self.image, (self.pos.x, self.pos.y))
-        else:
-            screen.blit(self.image_left, (self.pos.x, self.pos.y))
+        flipped = self.direction.x < 0
+        image = self.animations.get_image(flipped)
+        screen.blit(image, (self.pos.x, self.pos.y))

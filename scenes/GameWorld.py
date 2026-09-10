@@ -13,7 +13,6 @@ from scenes.PauseMenu import PauseMenu
 
 class GameWorld(GameScene):
 
-
     def __init__(self, audio, scene_manager):
         super().__init__()
 
@@ -73,7 +72,7 @@ class GameWorld(GameScene):
             self.enemies.append(
                 FlyEnemy(1500, 300, speed=-72, audio=self.audio))
         if level == 2:
-            self.enemies.append(Boss(1000,800,self.player,audio=self.audio))
+            self.enemies.append(Boss(1000, 800, self.player, audio=self.audio))
 
     # ------------------------------------------------------------------ #
     #  LOOP                                                              #
@@ -111,8 +110,8 @@ class GameWorld(GameScene):
         self.player.update(self.platforms, ground_y, self.dt)
 
         screen_width = pygame.display.get_surface().get_width()
-        self.player.x = max(
-            0, min(self.player.x, screen_width - self.player.width))
+        self.player.pos.x = max(
+            0, min(self.player.pos.x, screen_width - self.player.width))
 
     def update_enemies(self):
         for enemy in self.enemies:
@@ -129,7 +128,7 @@ class GameWorld(GameScene):
 
         for proj in self.enemy_projectiles[:]:
             proj.update(dt)
-            if proj.x < 0 or proj.x > screen_width:
+            if proj.pos.x < 0 or proj.pos.x > screen_width:
                 self.enemy_projectiles.remove(proj)
 
         for proj in self.player_projectiles[:]:
@@ -138,7 +137,7 @@ class GameWorld(GameScene):
             hit = False
 
             for enemy in self.enemies:
-                if proj.rect.colliderect(enemy.rect):
+                if proj.collides_with(enemy):
                     enemy.take_damage(1)
                     hit = True
 
@@ -162,13 +161,13 @@ class GameWorld(GameScene):
                 continue
 
             for plat in self.platforms:
-                if proj.rect.colliderect(plat.rect):
+                if proj.collides_with(plat):
                     self.player_projectiles.remove(proj)
                     break
 
         for proj in self.enemy_projectiles[:]:
             for plat in self.platforms:
-                if proj.rect.colliderect(plat.rect):
+                if proj.collides_with(plat):
                     self.enemy_projectiles.remove(proj)
                     break
 
@@ -178,36 +177,25 @@ class GameWorld(GameScene):
         for drop in self.drops[:]:
             drop.update(self.platforms, ground_y, self.dt)
 
-            if drop.rect.colliderect(self.player.rect):
+            if drop.collides_with(self.player):
                 self.drops.remove(drop)
 
     # ------------------------------------------------------------------ #
 
     def check_collisions(self):
-        player_rect = self.player.rect
 
         for proj in self.enemy_projectiles:
-            if proj.rect.colliderect(player_rect):
-
+            if proj.collides_with(self.player):
                 self.scene_manager.push(
-                    DeathMenu(
-                        self.audio,
-                        self.scene_manager
-                    )
+                    DeathMenu(self.audio, self.scene_manager)
                 )
-
                 return
 
         for enemy in self.enemies:
-            if player_rect.colliderect(enemy.rect):
-
+            if self.player.collides_with(enemy):
                 self.scene_manager.push(
-                    DeathMenu(
-                        self.audio,
-                        self.scene_manager
-                    )
+                    DeathMenu(self.audio, self.scene_manager)
                 )
-
                 return
 
         self.enemies = [
@@ -215,25 +203,23 @@ class GameWorld(GameScene):
             if e.alive
         ]
 
-
     def handle_level_transitions(self):
-        if self.player.y < 0:
+        if self.player.pos.y < 0:
             self.level += 1
             self.setup_level(self.level)
-            self.player.y = self.ground_y - self.player.height
+            self.player.pos.y = self.ground_y - self.player.height
 
-        elif self.player.y > self.ground_y and self.level > 0:
+        elif self.player.pos.y > self.ground_y and self.level > 0:
             self.level -= 1
             self.setup_level(self.level)
-            self.player.y = 0
+            self.player.pos.y = 0
 
-        if self.level == 0 and self.player.y + self.player.height > self.ground_y:
-            self.player.y = self.ground_y - self.player.height
-            self.player.vel_y = 0
+        if self.level == 0 and self.player.pos.y + self.player.height > self.ground_y:
+            self.player.pos.y = self.ground_y - self.player.height
+            self.player.vel.y = 0
             self.player.on_ground = True
 
     # ------------------------------------------------------------------ #
-
 
     def handle_events(self, events):
         for event in events:
@@ -241,8 +227,6 @@ class GameWorld(GameScene):
                 self.scene_manager.push(
                     PauseMenu(self.audio, self.scene_manager)
                 )
-
-
 
     # ------------------------------------------------------------------ #
 

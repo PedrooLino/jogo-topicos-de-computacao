@@ -1,34 +1,42 @@
-import pygame
 from objects.physics.Physicsbody import PhysicsBody
 from objects.physics.Vector2 import Vector2
+from objects.graphics.AnimationSet import AnimationSet
 
 PROJ_SPEED = 420
 
 
 class Projectile(PhysicsBody):
-    def __init__(self, x, y, direction=1, dir_y=0, image_path="sprites/tiro.png"):
+    """
+    Projétil que se move em linha reta na direção de um Vector2.
+
+    `direction` pode ser:
+      - um Vector2 (forma recomendada), ex: Vector2(1, 0), Vector2(0, -1)
+      - um número (compatibilidade com código antigo que passava só o
+        eixo X como int/float, ex: direction=1 ou direction=-1)
+    """
+
+    def __init__(self, x, y, direction=None,
+                 image_path="sprites/tiro.png", speed=PROJ_SPEED):
         super().__init__(x, y, width=10, height=10, use_gravity=False)
 
-        self.vel = Vector2(
-            PROJ_SPEED * direction,
-            PROJ_SPEED * dir_y
-        )
+        if direction is None:
+            direction = Vector2(1, 0)
+        elif not isinstance(direction, Vector2):
+            direction = Vector2(direction, 0)
+
+        direction = direction.normalized() if direction.length() > 0 else Vector2(1, 0)
 
         self.direction = direction
+        self.vel = direction * speed
 
-        # imagem dinâmica
-        self.image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(
-            self.image, (self.width, self.height))
-
-        self.image_left = pygame.transform.flip(self.image, True, False)
+        self.animations = AnimationSet()
+        self.animations.add_animation(
+            "default", image_path, self.width, self.height)
 
     def update(self, dt, *args):
-        self.pos.x += self.vel.x * dt
-        self.pos.y += self.vel.y * dt
+        self.pos = self.pos + self.vel * dt
 
     def draw(self, screen):
-
-        img = self.image if self.vel.x >= 0 else self.image_left
-
-        screen.blit(img, (self.pos.x, self.pos.y))
+        flipped = self.vel.x < 0
+        image = self.animations.get_image(flipped)
+        screen.blit(image, (self.pos.x, self.pos.y))

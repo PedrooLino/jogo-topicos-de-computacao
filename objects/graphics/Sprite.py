@@ -2,17 +2,6 @@ import pygame
 
 
 class Sprite:
-    """
-    Representa uma única imagem carregada, já escalada para o tamanho
-    da entidade, junto com sua versão espelhada horizontalmente
-    (usada quando a entidade olha para o lado oposto).
-
-    Um frame de Animation é sempre um Sprite.
-
-    Usa um cache de classe para não recarregar/reescalar a mesma
-    imagem várias vezes (ex: "sprites/bolafogo.png" é usada por
-    vários inimigos diferentes).
-    """
 
     _cache = {}
 

@@ -1,14 +1,5 @@
 class Animation:
-    """
-    Sequência de frames (Sprite) reproduzida com um intervalo fixo entre
-    cada um. Uma animação com um único frame se comporta simplesmente
-    como uma imagem estática (é o caso de praticamente todas as
-    entidades do jogo hoje, que só têm uma imagem "parada").
 
-    Feita para já suportar spritesheets/animação de fato no futuro,
-    bastando passar mais de um caminho de imagem em
-    AnimationSet.add_animation().
-    """
 
     def __init__(self, frames, frame_duration=0.1, loop=True):
         if not frames:

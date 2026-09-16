@@ -3,30 +3,6 @@ from objects.graphics.Animation import Animation
 
 
 class AnimationSet:
-    """
-    Conjunto nomeado de animações (ex: "idle", "walk", "attack") de uma
-    entidade, com troca de estado (play) e espelhamento automático
-    conforme a direção em que a entidade está olhando.
-
-    Uso típico (uma imagem estática, como hoje no jogo):
-
-        self.animations = AnimationSet()
-        self.animations.add_animation("idle", "sprites/Demonio.png",
-                                       self.width, self.height)
-
-        # no draw():
-        image = self.animations.get_image(flipped=self.vel.x <= 0)
-        screen.blit(image, (self.pos.x, self.pos.y))
-
-    Uso com múltiplos frames (spritesheet futura):
-
-        self.animations.add_animation(
-            "walk",
-            ["sprites/walk_0.png", "sprites/walk_1.png", "sprites/walk_2.png"],
-            self.width, self.height,
-            frame_duration=0.12,
-        )
-    """
 
     def __init__(self):
         self.animations = {}

@@ -88,7 +88,7 @@ class GameWorld(GameScene):
         self.check_collisions()
         self.handle_level_transitions()
 
-    # ------------------------------------------------------------------ #
+
 
     def handle_player_input(self, keys):
         self.player.handle_input(keys)

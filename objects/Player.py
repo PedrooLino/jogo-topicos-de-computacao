@@ -20,8 +20,24 @@ class Player(BattleEntity):
 
         self.animations = AnimationSet()
         self.animations.add_animation(
-            "idle", "sprites/personagem.png", self.width, self.height
+            "idle",
+            [
+                "sprites/personagem/personagem.png",
+                "sprites/personagem/personagem2.png",
+            ],
+            self.width,
+            self.height,
+            frame_duration=0.50
         )
+        
+        self.animations.add_animation(
+            "jump",
+            "sprites/personagem/personagemPulo.png",
+            self.width,
+            self.height,
+            loop=False
+        )
+
 
         self.projectile_image = "sprites/tiro.png"
 
@@ -39,9 +55,17 @@ class Player(BattleEntity):
         if keys[pygame.K_w] and self.on_ground:
             self.vel.y = self.jump_speed
             self.on_ground = False
+            self.animations.play("jump", restart_if_same=True)
 
     def update(self, platforms, ground_y, dt):
         self.physics_update(dt, platforms, ground_y)
+
+        if self.on_ground:
+            self.animations.play("idle")
+
+        self.animations.update(dt)
+
+
 
     def _on_land(self, plat):
         if hasattr(plat, "trigger"):

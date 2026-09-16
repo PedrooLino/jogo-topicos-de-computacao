@@ -1,5 +1,7 @@
 import pygame
 from objects.physics.Battleentity import BattleEntity
+from objects.physics.Vector2 import Vector2
+from objects.graphics.AnimationSet import AnimationSet
 from objects.Projectile import Projectile
 
 PATROL_SPEED = 120
@@ -18,10 +20,9 @@ class Enemy(BattleEntity):
         self.shoot_delay = 1500
         self.drop_chance = 0.1
 
-        self.image = pygame.image.load(image_path).convert_alpha()
-        self.image = pygame.transform.scale(
-            self.image, (self.width, self.height))
-        self.image_left = pygame.transform.flip(self.image, True, False)
+        self.animations = AnimationSet()
+        self.animations.add_animation(
+            "idle", image_path, self.width, self.height)
 
         self.projectile_image = "sprites/bolafogo.png"
 
@@ -47,14 +48,13 @@ class Enemy(BattleEntity):
             self.vel.x *= -1
 
         if self.can_shoot():
-
-            direction = 1 if self.vel.x > 0 else -1
+            direction = Vector2(1 if self.vel.x > 0 else -1, 0)
 
             projectiles_list.append(
                 Projectile(
                     self.pos.x + self.width // 2,
                     self.pos.y + self.height // 2,
-                    direction,
+                    direction=direction,
                     image_path=self.projectile_image
                 )
             )
@@ -62,11 +62,9 @@ class Enemy(BattleEntity):
                 self.audio.play_enemy_shoot()
 
     def draw(self, screen):
-
-        if self.vel.x > 0:
-            screen.blit(self.image, (self.pos.x, self.pos.y))
-        else:
-            screen.blit(self.image_left, (self.pos.x, self.pos.y))
+        flipped = self.vel.x <= 0
+        image = self.animations.get_image(flipped)
+        screen.blit(image, (self.pos.x, self.pos.y))
 
     def _skip_platform(self, plat):
         return False

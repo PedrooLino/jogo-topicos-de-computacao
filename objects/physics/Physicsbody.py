@@ -1,6 +1,6 @@
-import pygame
 from objects.GameObject import GameObject
 from objects.physics.Vector2 import Vector2
+from objects.physics import Collision
 
 GRAVITY = 1800  # px/s²
 
@@ -8,18 +8,22 @@ GRAVITY = 1800  # px/s²
 class PhysicsBody(GameObject):
     """
     Física baseada em delta time.
-    pos e vel são Vector2. Toda lógica de gravidade, movimento e
-    resolução de colisão vive aqui.
+    pos e vel são Vector2. A resolução de colisão em si vive no módulo
+    Collision (objects/physics/Collision.py) — esta classe só orquestra
+    apply_gravity -> mover -> resolver.
     """
 
-    def __init__(self, x, y, width=50, height=50, use_gravity=True):
-        super().__init__(x, y, width, height)
+    def __init__(self, x, y, width=50, height=50, use_gravity=True,
+                 hitbox_offset=(0, 0), hitbox_size=None):
+        super().__init__(x, y, width, height,
+                         hitbox_offset=hitbox_offset,
+                         hitbox_size=hitbox_size)
 
         self.vel = Vector2(0, 0)   # px/s
         self.use_gravity = use_gravity
         self.on_ground = False
 
-   
+    # ---------------- Compat vel_x/vel_y (delegam para o vetor vel) ----------------
     @property
     def vel_x(self):
         return self.vel.x
@@ -36,46 +40,16 @@ class PhysicsBody(GameObject):
     def vel_y(self, value):
         self.vel.y = float(value)
 
-
-
+    # ---------------- Física ----------------
     def apply_gravity(self, dt):
         if self.use_gravity:
             self.vel.y += GRAVITY * dt
 
     def resolve_x(self, platforms):
-        rect = self.rect
-        for plat in platforms:
-            if self._skip_platform(plat):
-                continue
-            if rect.colliderect(plat.rect):
-                if self.vel.x > 0:
-                    self.pos.x = plat.rect.left - self.width
-                elif self.vel.x < 0:
-                    self.pos.x = plat.rect.right
-                rect = self.rect
+        Collision.resolve_horizontal(self, platforms)
 
     def resolve_y(self, platforms, ground_y=None):
-        self.on_ground = False
-        rect = self.rect
-
-        for plat in platforms:
-            if self._skip_platform(plat):
-                continue
-            if rect.colliderect(plat.rect):
-                if self.vel.y > 0:
-                    self.pos.y = plat.rect.top - self.height
-                    self.vel.y = 0
-                    self.on_ground = True
-                    self._on_land(plat)
-                elif self.vel.y < 0:
-                    self.pos.y = plat.rect.bottom
-                    self.vel.y = 0
-                rect = self.rect
-
-        if ground_y is not None and self.pos.y + self.height >= ground_y:
-            self.pos.y = ground_y - self.height
-            self.vel.y = 0
-            self.on_ground = True
+        self.on_ground = Collision.resolve_vertical(self, platforms, ground_y)
 
     def physics_update(self, dt, platforms=None, ground_y=None):
         """Move X → resolve X → move Y → resolve Y."""
@@ -94,8 +68,7 @@ class PhysicsBody(GameObject):
                 self.vel.y = 0
                 self.on_ground = True
 
-
-
+    # ---------------- Hooks (sobrescritos por subclasses quando precisar) ----------------
     def _skip_platform(self, plat):
         if not hasattr(plat, "estado"):
             return False

@@ -9,7 +9,6 @@ class MainMenu(GameScene):
         self.audio = audio
         self.scene_manager = scene_manager
 
-
         self.font = pygame.font.SysFont(
             "Courier New",
             20,
@@ -91,7 +90,6 @@ class MainMenu(GameScene):
         elif self.selected_button == 2:
             self.exit_game()
 
-    
     def start_game(self):
 
         from scenes.GameWorld import GameWorld
@@ -99,7 +97,6 @@ class MainMenu(GameScene):
         self.scene_manager.push(
             GameWorld(self.audio, self.scene_manager)
         )
-
 
     def show_credits(self):
 
@@ -111,7 +108,6 @@ class MainMenu(GameScene):
                 self.scene_manager
             )
         )
-
 
     def exit_game(self):
 

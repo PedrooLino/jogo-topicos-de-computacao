@@ -22,7 +22,6 @@ class CreditsScene(GameScene):
             bold=True
         )
 
-
     def handle_events(self, events):
 
         for event in events:
@@ -37,18 +36,12 @@ class CreditsScene(GameScene):
                 if event.button == 1:
                     self.go_back()
 
-
-
     def go_back(self):
 
         self.scene_manager.pop()
 
-
-
     def update(self):
         pass
-
-
 
     def render(self, screen):
 
@@ -71,7 +64,6 @@ class CreditsScene(GameScene):
             title_surf,
             title_rect
         )
-
 
         dev1_surf = self.font.render(
             "THEO",
@@ -108,7 +100,6 @@ class CreditsScene(GameScene):
             dev2_surf,
             dev2_rect
         )
-
 
         back_surf = self.font.render(
             "ESC ou clique para voltar",

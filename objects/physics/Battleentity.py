@@ -5,8 +5,10 @@ from objects.physics.Physicsbody import PhysicsBody
 
 class BattleEntity(PhysicsBody):
     def __init__(self, x, y, width=50, height=50,
-                 hp=3, use_gravity=True, color=(255, 255, 255)):
-        super().__init__(x, y, width, height, use_gravity=use_gravity)
+                 hp=3, use_gravity=True, color=(255, 255, 255),
+                 hitbox_offset=(0, 0), hitbox_size=None):
+        super().__init__(x, y, width, height, use_gravity=use_gravity,
+                         hitbox_offset=hitbox_offset, hitbox_size=hitbox_size)
 
         self.hp = hp
         self.max_hp = hp

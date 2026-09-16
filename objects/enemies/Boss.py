@@ -3,6 +3,7 @@ import random
 import pygame
 
 from objects.enemies.Enemy import Enemy
+from objects.physics.Vector2 import Vector2
 from objects.Projectile import Projectile
 
 
@@ -27,6 +28,8 @@ class Boss(Enemy):
             image_path=image_path,
             audio=audio
         )
+        # Enemy.__init__ já carrega a imagem em self.animations,
+        # então não é necessário recarregar/reescalar de novo aqui.
 
         self.max_hp = 10
         self.hp = self.max_hp
@@ -45,26 +48,7 @@ class Boss(Enemy):
         self.shoot_delay = 1500
         self.projectile_image = "sprites/bolafogo.png"
 
-
         self.phase = 1
-
-
-        self.image = pygame.image.load(
-            image_path
-        ).convert_alpha()
-
-        self.image = pygame.transform.scale(
-            self.image,
-            (self.width, self.height)
-        )
-
-        self.image_left = pygame.transform.flip(
-            self.image,
-            True,
-            False
-        )
-
-
 
     def update(
         self,
@@ -88,8 +72,6 @@ class Boss(Enemy):
             projectiles_list
         )
 
-
-
     def update_phase(self):
 
         hp_percent = self.hp / self.max_hp
@@ -102,8 +84,6 @@ class Boss(Enemy):
 
         else:
             self.phase = 3
-
-
 
     def update_movement(
         self,
@@ -122,7 +102,7 @@ class Boss(Enemy):
 
         moved = self.pos.x - previous_x
 
-        #bateu horizontalmente em alguma plataforma
+        # bateu horizontalmente em alguma plataforma
         if (
             (self.vel.x > 0 and moved <= 0)
             or
@@ -130,7 +110,7 @@ class Boss(Enemy):
         ):
             self.vel.x *= -1
 
-        #elocidade depende da fase
+        # velocidade depende da fase
         if self.phase == 1:
             speed = 120
 
@@ -145,7 +125,7 @@ class Boss(Enemy):
         else:
             self.vel.x = -speed
 
-        #limites da tela
+        # limites da tela
         screen_width = pygame.display.get_surface().get_width()
 
         if self.pos.x + self.width >= screen_width:
@@ -158,7 +138,6 @@ class Boss(Enemy):
 
         # Pulo
         self.try_jump()
-
 
     def try_jump(self):
 
@@ -186,7 +165,6 @@ class Boss(Enemy):
 
             self.last_jump = now
 
-
     def update_attack(self, projectiles_list):
 
         if self.phase == 1:
@@ -201,152 +179,73 @@ class Boss(Enemy):
         if self.can_shoot():
             self.shoot(projectiles_list)
 
-
-
     def shoot(self, projectiles_list):
 
         cx = self.pos.x + self.width / 2
         cy = self.pos.y + self.height / 2
 
-
-
-        player_x = (
-            self.player.pos.x +
-            self.player.width / 2
+        player_center = Vector2(
+            self.player.pos.x + self.player.width / 2,
+            self.player.pos.y + self.player.height / 2
         )
 
-        player_y = (
-            self.player.pos.y +
-            self.player.height / 2
+        to_player = player_center - Vector2(cx, cy)
+        direction = (
+            to_player.normalized()
+            if to_player.length() > 0
+            else Vector2(1, 0)
         )
 
-        dx = player_x - cx
-        dy = player_y - cy
-
-        distance = math.hypot(dx, dy)
-
-        if distance == 0:
-            dx = 1
-            dy = 0
-            distance = 1
-
-
-        dx /= distance
-        dy /= distance
-
-
-        self.create_projectile(
-            projectiles_list,
-            cx,
-            cy,
-            dx,
-            dy
-        )
-
-
+        self.create_projectile(projectiles_list, cx, cy, direction)
 
         if self.phase >= 2:
-
-            angle = math.radians(20)
-
-
-            dx1 = (
-                dx * math.cos(angle)
-                - dy * math.sin(angle)
-            )
-
-            dy1 = (
-                dx * math.sin(angle)
-                + dy * math.cos(angle)
-            )
-
-
-            dx2 = (
-                dx * math.cos(-angle)
-                - dy * math.sin(-angle)
-            )
-
-            dy2 = (
-                dx * math.sin(-angle)
-                + dy * math.cos(-angle)
-            )
+            spread_angle = math.radians(20)
 
             self.create_projectile(
-                projectiles_list,
-                cx,
-                cy,
-                dx1,
-                dy1
+                projectiles_list, cx, cy, direction.rotated(spread_angle)
             )
-
             self.create_projectile(
-                projectiles_list,
-                cx,
-                cy,
-                dx2,
-                dy2
+                projectiles_list, cx, cy, direction.rotated(-spread_angle)
             )
-
 
         if self.phase >= 3:
-
             directions = [
-                (1, 0),
-                (-1, 0),
-                (0, 1),
-                (0, -1)
+                Vector2(1, 0),
+                Vector2(-1, 0),
+                Vector2(0, 1),
+                Vector2(0, -1),
             ]
 
-            for dir_x, dir_y in directions:
-
-                self.create_projectile(
-                    projectiles_list,
-                    cx,
-                    cy,
-                    dir_x,
-                    dir_y
-                )
+            for dir_vec in directions:
+                self.create_projectile(projectiles_list, cx, cy, dir_vec)
 
         if self.audio:
             self.audio.play_enemy_shoot()
-
-
 
     def create_projectile(
         self,
         projectiles_list,
         x,
         y,
-        direction_x,
-        direction_y
+        direction
     ):
 
         projectile = Projectile(
             x,
             y,
-            direction_x,
-            direction_y,
+            direction=direction,
             image_path=self.projectile_image
         )
 
         projectiles_list.append(projectile)
 
-
     def draw(self, screen):
 
-        if self.vel.x >= 0:
-            screen.blit(
-                self.image,
-                (self.pos.x, self.pos.y)
-            )
-        else:
-            screen.blit(
-                self.image_left,
-                (self.pos.x, self.pos.y)
-            )
+        flipped = self.vel.x < 0
+        image = self.animations.get_image(flipped)
+        screen.blit(image, (self.pos.x, self.pos.y))
 
         self.draw_health_bar(screen)
-
 
     def draw_health_bar(self, screen):
 
@@ -360,7 +259,7 @@ class Boss(Enemy):
 
         y = 30
 
-        #fundo
+        # fundo
         pygame.draw.rect(
             screen,
             (60, 60, 60),
@@ -372,7 +271,7 @@ class Boss(Enemy):
             )
         )
 
-        #vida
+        # vida
         hp_width = int(
             bar_width *
             (self.hp / self.max_hp)
@@ -398,7 +297,7 @@ class Boss(Enemy):
             )
         )
 
-        #borda
+        # borda
         pygame.draw.rect(
             screen,
             (255, 255, 255),
@@ -411,7 +310,7 @@ class Boss(Enemy):
             2
         )
 
-        #teexto
+        # texto
         font = pygame.font.SysFont(
             "Arial",
             25,

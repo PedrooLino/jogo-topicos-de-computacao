@@ -6,12 +6,6 @@ GRAVITY = 1800  # px/s²
 
 
 class PhysicsBody(GameObject):
-    """
-    Física baseada em delta time.
-    pos e vel são Vector2. A resolução de colisão em si vive no módulo
-    Collision (objects/physics/Collision.py) — esta classe só orquestra
-    apply_gravity -> mover -> resolver.
-    """
 
     def __init__(self, x, y, width=50, height=50, use_gravity=True,
                  hitbox_offset=(0, 0), hitbox_size=None):

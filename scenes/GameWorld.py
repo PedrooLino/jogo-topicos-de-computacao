@@ -29,7 +29,7 @@ class GameWorld(GameScene):
 
         self.player = Player(100, self.ground_y - 50, self.audio)
         self.score = 0
-        self.level = 2
+        self.level = 1
         self.platforms = []
         self.enemies = []
 
@@ -67,8 +67,13 @@ class GameWorld(GameScene):
             self.enemies.append(TowerEnemy(1600, 500, audio=self.audio))
             self.enemies.append(TowerEnemy(1600, 1200, audio=self.audio))
             self.enemies.append(FlyEnemy(200, 100, audio=self.audio))
-            self.enemies.append(
-                FlyEnemy(1500, 300, speed=-72, audio=self.audio))
+            self.enemies.append(FlyEnemy(1500, 300, speed=-72, audio=self.audio))
+        
+        if level == 1:
+            self.enemies.append(FlyEnemy(200, 100, audio=self.audio))
+            self.enemies.append(FlyEnemy(1500, 300, speed=-72, audio=self.audio))
+            self.enemies.append(FlyEnemy(450, 600, speed=40, audio=self.audio))
+        
         if level == 2:
             self.enemies.append(Boss(1000, 800, self.player, audio=self.audio))
 

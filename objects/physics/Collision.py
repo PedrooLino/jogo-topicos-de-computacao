@@ -1,23 +1,3 @@
-"""
-Módulo de colisão.
-
-Toda a lógica de "quem colide com quem" e "como resolver a colisão"
-vive aqui, separada da física de movimento (Physicsbody) e das
-entidades do jogo. Isso permite que qualquer objeto que tenha:
-
-    - .pos            (Vector2)
-    - .width, .height (int/float)
-    - .hitbox_offset   (Vector2, opcional -> default (0, 0))
-    - .hitbox_size     (tupla (w, h), opcional -> default (width, height))
-
-participe da colisão, sem precisar herdar de nenhuma classe específica.
-
-A "hitbox" é genérica: por padrão ela é igual ao retângulo do sprite,
-mas qualquer entidade pode definir um hitbox menor/maior/deslocado
-apenas setando `self.hitbox_offset` e `self.hitbox_size` (veja
-GameObject), sem precisar mexer neste módulo.
-"""
-
 import pygame
 
 
@@ -39,19 +19,17 @@ def get_hitbox(entity):
 
 
 def check_collision(entity_a, entity_b):
-    """Colisão genérica entre duas entidades (usa hitbox, não o rect do sprite)."""
+
     return get_hitbox(entity_a).colliderect(get_hitbox(entity_b))
 
 
 def check_collision_rect(entity, rect):
-    """Colisão entre a hitbox de uma entidade e um pygame.Rect qualquer."""
+
     return get_hitbox(entity).colliderect(rect)
 
 
 def _skip(entity, plat):
-    """Permite que a própria entidade decida se ignora certa plataforma
-    (ex: Enemy nunca ignora plataformas quebráveis, Player/Drop ignoram
-    as que já estão abrindo)."""
+
     skip_fn = getattr(entity, "_skip_platform", None)
     if skip_fn is not None:
         return skip_fn(plat)
@@ -59,7 +37,7 @@ def _skip(entity, plat):
 
 
 def resolve_horizontal(entity, platforms):
-    """Resolve colisão no eixo X contra uma lista de plataformas, usando hitbox."""
+
     offset_x = getattr(entity, "hitbox_offset", None)
     offset_x = offset_x.x if offset_x is not None else 0
 
@@ -79,7 +57,7 @@ def resolve_horizontal(entity, platforms):
 
 
 def resolve_vertical(entity, platforms, ground_y=None):
-    """Resolve colisão no eixo Y contra plataformas e o chão. Retorna se está no chão."""
+
     on_ground = False
 
     offset_y = getattr(entity, "hitbox_offset", None)

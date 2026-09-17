@@ -53,10 +53,10 @@ class MainMenu(GameScene):
                             self.selected_button + 1
                         ) % 3
 
-                elif event.key in (
-                    pygame.K_RETURN,
-                    pygame.K_SPACE
-                ):
+                elif event.key == pygame.K_SPACE:
+                    self.start_game()
+
+                elif event.key == pygame.K_RETURN:
                     if self.selected_button is not None:
                         self.activate_button()
 
@@ -78,6 +78,7 @@ class MainMenu(GameScene):
 
                     elif exit_rect.collidepoint(mouse_pos):
                         self.exit_game()
+
 
     def activate_button(self):
 

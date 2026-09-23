@@ -4,6 +4,7 @@ import pygame
 
 from objects.enemies.Enemy import Enemy
 from objects.physics.Vector2 import Vector2
+from objects.graphics.AnimationSet import AnimationSet
 from objects.Projectile import Projectile
 
 
@@ -14,7 +15,6 @@ class Boss(Enemy):
         x,
         y,
         player,
-        image_path="sprites/Amalgama.png",
         color=(150, 0, 0),
         audio=None
     ):
@@ -25,23 +25,21 @@ class Boss(Enemy):
             height=100,
             speed=120,
             color=color,
-            image_path=image_path,
+            image_path="sprites/amalgama/Amalgama.png",
             audio=audio
         )
-        # Enemy.__init__ já carrega a imagem em self.animations,
-        # então não é necessário recarregar/reescalar de novo aqui.
 
-        self.max_hp = 10
+        self.max_hp = 12
         self.hp = self.max_hp
 
-        self.points = 1000
+        self.points = 100
         self.drop_chance = 1.0
 
         self.player = player
 
-        self.vel.x = 120
-
+        self.vel.x = 0
         self.jump_speed = -500
+
         self.jump_cooldown = 3000
         self.last_jump = pygame.time.get_ticks()
 
@@ -49,6 +47,26 @@ class Boss(Enemy):
         self.projectile_image = "sprites/bolafogo.png"
 
         self.phase = 1
+
+        self.animations = AnimationSet()
+
+        self.animations.add_animation(
+            "idle",
+            [
+                "sprites/amalgama/Amalgama.png",
+                "sprites/amalgama/Amalgama-2.png",
+                "sprites/amalgama/Amalgama-3.png",
+                "sprites/amalgama/Amalgama-4.png",
+                "sprites/amalgama/Amalgama-5.png",
+                "sprites/amalgama/Amalgama-6.png",
+                "sprites/amalgama/Amalgama-7.png",
+                "sprites/amalgama/Amalgama-8.png",
+                "sprites/amalgama/Amalgama-9.png",
+            ],
+            self.width,
+            self.height,
+            frame_duration=0.10
+        )
 
     def update(
         self,
@@ -72,6 +90,8 @@ class Boss(Enemy):
             projectiles_list
         )
 
+        self.animations.update(dt)
+
     def update_phase(self):
 
         hp_percent = self.hp / self.max_hp
@@ -91,26 +111,6 @@ class Boss(Enemy):
         ground_y,
         dt
     ):
-        previous_x = self.pos.x
-
-        # Física normal do jogo
-        self.physics_update(
-            dt,
-            platforms,
-            ground_y
-        )
-
-        moved = self.pos.x - previous_x
-
-        # bateu horizontalmente em alguma plataforma
-        if (
-            (self.vel.x > 0 and moved <= 0)
-            or
-            (self.vel.x < 0 and moved >= 0)
-        ):
-            self.vel.x *= -1
-
-        # velocidade depende da fase
         if self.phase == 1:
             speed = 120
 
@@ -120,23 +120,38 @@ class Boss(Enemy):
         else:
             speed = 220
 
-        if self.vel.x > 0:
+        boss_center = self.pos.x + self.width / 2
+        player_center = self.player.pos.x + self.player.width / 2
+
+        distance_x = player_center - boss_center
+
+        dead_zone = 5
+
+        if distance_x > dead_zone:
             self.vel.x = speed
-        else:
+
+        elif distance_x < -dead_zone:
             self.vel.x = -speed
 
-        # limites da tela
+        else:
+            self.vel.x = 0
+
+        self.physics_update(
+            dt,
+            platforms,
+            ground_y
+        )
+
         screen_width = pygame.display.get_surface().get_width()
 
         if self.pos.x + self.width >= screen_width:
             self.pos.x = screen_width - self.width
-            self.vel.x = -abs(self.vel.x)
+            self.vel.x = 0
 
         elif self.pos.x <= 0:
             self.pos.x = 0
-            self.vel.x = abs(self.vel.x)
+            self.vel.x = 0
 
-        # Pulo
         self.try_jump()
 
     def try_jump(self):
@@ -189,26 +204,46 @@ class Boss(Enemy):
             self.player.pos.y + self.player.height / 2
         )
 
-        to_player = player_center - Vector2(cx, cy)
+        boss_center = Vector2(
+            cx,
+            cy
+        )
+
+        to_player = player_center - boss_center
+
         direction = (
             to_player.normalized()
             if to_player.length() > 0
             else Vector2(1, 0)
         )
 
-        self.create_projectile(projectiles_list, cx, cy, direction)
+        self.create_projectile(
+            projectiles_list,
+            cx,
+            cy,
+            direction
+        )
 
         if self.phase >= 2:
+
             spread_angle = math.radians(20)
 
             self.create_projectile(
-                projectiles_list, cx, cy, direction.rotated(spread_angle)
+                projectiles_list,
+                cx,
+                cy,
+                direction.rotated(spread_angle)
             )
+
             self.create_projectile(
-                projectiles_list, cx, cy, direction.rotated(-spread_angle)
+                projectiles_list,
+                cx,
+                cy,
+                direction.rotated(-spread_angle)
             )
 
         if self.phase >= 3:
+
             directions = [
                 Vector2(1, 0),
                 Vector2(-1, 0),
@@ -217,7 +252,13 @@ class Boss(Enemy):
             ]
 
             for dir_vec in directions:
-                self.create_projectile(projectiles_list, cx, cy, dir_vec)
+
+                self.create_projectile(
+                    projectiles_list,
+                    cx,
+                    cy,
+                    dir_vec
+                )
 
         if self.audio:
             self.audio.play_enemy_shoot()
@@ -242,8 +283,13 @@ class Boss(Enemy):
     def draw(self, screen):
 
         flipped = self.vel.x < 0
+
         image = self.animations.get_image(flipped)
-        screen.blit(image, (self.pos.x, self.pos.y))
+
+        screen.blit(
+            image,
+            (self.pos.x, self.pos.y)
+        )
 
         self.draw_health_bar(screen)
 
@@ -259,7 +305,6 @@ class Boss(Enemy):
 
         y = 30
 
-        # fundo
         pygame.draw.rect(
             screen,
             (60, 60, 60),
@@ -271,7 +316,6 @@ class Boss(Enemy):
             )
         )
 
-        # vida
         hp_width = int(
             bar_width *
             (self.hp / self.max_hp)
@@ -297,7 +341,6 @@ class Boss(Enemy):
             )
         )
 
-        # borda
         pygame.draw.rect(
             screen,
             (255, 255, 255),
@@ -310,7 +353,6 @@ class Boss(Enemy):
             2
         )
 
-        # texto
         font = pygame.font.SysFont(
             "Arial",
             25,

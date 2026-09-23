@@ -51,3 +51,4 @@ Arrumar colisão em funcção de hitbox generica
 criar um modulo separado para tratar colisão 
 fazer classe de sprite, animacao e conjunto de animacao 
 fisica (x.y)
+

@@ -10,6 +10,7 @@ from levels.Levels import LEVELS
 from scenes.DeathMenu import DeathMenu
 from scenes.PauseMenu import PauseMenu
 from scenes.VictoryMenu import VictoryMenu
+from core.Leaderboard import Leaderboard
 
 
 class GameWorld(GameScene):
@@ -34,7 +35,6 @@ class GameWorld(GameScene):
         self.platforms = []
         self.enemies = []
 
-
         self.background = pygame.image.load("sprites/fundo.jpg").convert()
 
         self.background = pygame.transform.scale(
@@ -42,13 +42,10 @@ class GameWorld(GameScene):
             pygame.display.get_surface().get_size()
         )
 
-
         self.dt = 0.0
         self._last_time = pygame.time.get_ticks()
 
         self.setup_level(self.level)
-
-
 
     def setup_level(self, level):
         self.platforms = []
@@ -68,13 +65,15 @@ class GameWorld(GameScene):
             self.enemies.append(TowerEnemy(1600, 500, audio=self.audio))
             self.enemies.append(TowerEnemy(1600, 1200, audio=self.audio))
             self.enemies.append(FlyEnemy(200, 100, audio=self.audio))
-            self.enemies.append(FlyEnemy(1500, 300, speed=-72, audio=self.audio))
-        
+            self.enemies.append(
+                FlyEnemy(1500, 300, speed=-72, audio=self.audio))
+
         if level == 1:
             self.enemies.append(FlyEnemy(200, 100, audio=self.audio))
-            self.enemies.append(FlyEnemy(1500, 300, speed=-72, audio=self.audio))
+            self.enemies.append(
+                FlyEnemy(1500, 300, speed=-72, audio=self.audio))
             self.enemies.append(FlyEnemy(450, 600, speed=40, audio=self.audio))
-        
+
         if level == 2:
             self.enemies.append(Boss(1000, 840, self.player, audio=self.audio))
 
@@ -93,8 +92,6 @@ class GameWorld(GameScene):
         self.update_drops()
         self.check_collisions()
         self.handle_level_transitions()
-
-
 
     def handle_player_input(self, keys):
         self.player.handle_input(keys)
@@ -143,13 +140,13 @@ class GameWorld(GameScene):
 
                     if not enemy.alive:
 
-                        #som de morte
+                        # som de morte
                         self.audio.play_enemy_die()
 
-                        #pontos
+                        # pontos
                         self.score += enemy.points
 
-                        #drop
+                        # drop
                         drop = enemy.try_drop()
                         if drop:
                             self.drops.append(drop)
@@ -180,7 +177,6 @@ class GameWorld(GameScene):
             if drop.collides_with(self.player):
                 self.drops.remove(drop)
 
-
     def check_collisions(self):
 
         for proj in self.enemy_projectiles:
@@ -202,12 +198,7 @@ class GameWorld(GameScene):
             and self.enemies
             and all(not enemy.alive for enemy in self.enemies)
         ):
-            self.scene_manager.push(
-                VictoryMenu(
-                    self.audio,
-                    self.scene_manager
-                )
-            )
+            self.go_to_victory()
             return
 
         self.enemies = [
@@ -215,6 +206,31 @@ class GameWorld(GameScene):
             if e.alive
         ]
 
+    def go_to_victory(self):
+        """
+        Ao vencer: se a pontuação entrar no top 10 do leaderboard,
+        primeiro pede o nome de 3 letras (estilo arcade) antes de
+        mostrar a tela de vitória. Caso contrário, vai direto pra
+        vitória.
+        """
+
+        leaderboard = Leaderboard()
+
+        if leaderboard.qualifies(self.score):
+            from scenes.NameEntryScene import NameEntryScene
+
+            self.scene_manager.push(
+                NameEntryScene(
+                    self.audio,
+                    self.scene_manager,
+                    self.score,
+                    lambda: VictoryMenu(self.audio, self.scene_manager)
+                )
+            )
+        else:
+            self.scene_manager.push(
+                VictoryMenu(self.audio, self.scene_manager)
+            )
 
     def handle_level_transitions(self):
         if self.player.pos.y < 0:
@@ -260,7 +276,7 @@ class GameWorld(GameScene):
         for proj in self.enemy_projectiles:
             proj.draw(screen)
 
-        #fase
+        # fase
         level_text = self.font.render(
             f"Fase: {self.level}",
             True,
@@ -268,7 +284,7 @@ class GameWorld(GameScene):
         )
         screen.blit(level_text, (20, 20))
 
-        #ponyo
+        # pontos
         score_text = self.font.render(
             f"Pontos: {self.score}",
             True,

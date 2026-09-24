@@ -29,6 +29,9 @@ class MainMenu(GameScene):
         self.button_height = 65
         self.button_gap = 35
 
+        # Ordem dos botões: 0 = Começar, 1 = Leaderboard, 2 = Créditos, 3 = Sair
+        self.num_buttons = 4
+
         self.selected_button = None
 
     def handle_events(self, events):
@@ -43,7 +46,7 @@ class MainMenu(GameScene):
                     else:
                         self.selected_button = (
                             self.selected_button - 1
-                        ) % 3
+                        ) % self.num_buttons
 
                 elif event.key == pygame.K_DOWN:
                     if self.selected_button is None:
@@ -51,7 +54,7 @@ class MainMenu(GameScene):
                     else:
                         self.selected_button = (
                             self.selected_button + 1
-                        ) % 3
+                        ) % self.num_buttons
 
                 elif event.key == pygame.K_SPACE:
                     self.start_game()
@@ -66,12 +69,15 @@ class MainMenu(GameScene):
 
                     mouse_pos = pygame.mouse.get_pos()
 
-                    start_rect, credits_rect, exit_rect = (
+                    start_rect, leaderboard_rect, credits_rect, exit_rect = (
                         self.get_button_rects()
                     )
 
                     if start_rect.collidepoint(mouse_pos):
                         self.start_game()
+
+                    elif leaderboard_rect.collidepoint(mouse_pos):
+                        self.show_leaderboard()
 
                     elif credits_rect.collidepoint(mouse_pos):
                         self.show_credits()
@@ -79,16 +85,18 @@ class MainMenu(GameScene):
                     elif exit_rect.collidepoint(mouse_pos):
                         self.exit_game()
 
-
     def activate_button(self):
 
         if self.selected_button == 0:
             self.start_game()
 
         elif self.selected_button == 1:
-            self.show_credits()
+            self.show_leaderboard()
 
         elif self.selected_button == 2:
+            self.show_credits()
+
+        elif self.selected_button == 3:
             self.exit_game()
 
     def start_game(self):
@@ -97,6 +105,17 @@ class MainMenu(GameScene):
 
         self.scene_manager.push(
             GameWorld(self.audio, self.scene_manager)
+        )
+
+    def show_leaderboard(self):
+
+        from scenes.LeaderboardScene import LeaderboardScene
+
+        self.scene_manager.push(
+            LeaderboardScene(
+                self.audio,
+                self.scene_manager
+            )
         )
 
     def show_credits(self):
@@ -122,8 +141,8 @@ class MainMenu(GameScene):
         screen_width, screen_height = screen.get_size()
 
         total_height = (
-            self.button_height * 3
-            + self.button_gap * 2
+            self.button_height * self.num_buttons
+            + self.button_gap * (self.num_buttons - 1)
         )
 
         start_y = (
@@ -139,16 +158,15 @@ class MainMenu(GameScene):
             self.button_height
         )
 
-        credits_rect = pygame.Rect(
+        leaderboard_rect = pygame.Rect(
             button_x,
             start_y
-            + self.button_height
-            + self.button_gap,
+            + (self.button_height + self.button_gap) * 1,
             self.button_width,
             self.button_height
         )
 
-        exit_rect = pygame.Rect(
+        credits_rect = pygame.Rect(
             button_x,
             start_y
             + (self.button_height + self.button_gap) * 2,
@@ -156,7 +174,15 @@ class MainMenu(GameScene):
             self.button_height
         )
 
-        return start_rect, credits_rect, exit_rect
+        exit_rect = pygame.Rect(
+            button_x,
+            start_y
+            + (self.button_height + self.button_gap) * 3,
+            self.button_width,
+            self.button_height
+        )
+
+        return start_rect, leaderboard_rect, credits_rect, exit_rect
 
     def update(self):
         pass
@@ -275,7 +301,7 @@ class MainMenu(GameScene):
             title_rect
         )
 
-        start_rect, credits_rect, exit_rect = (
+        start_rect, leaderboard_rect, credits_rect, exit_rect = (
             self.get_button_rects()
         )
 
@@ -288,14 +314,21 @@ class MainMenu(GameScene):
 
         self.render_button(
             screen,
+            leaderboard_rect,
+            "LEADERBOARD",
+            self.selected_button == 1
+        )
+
+        self.render_button(
+            screen,
             credits_rect,
             "CRÉDITOS",
-            self.selected_button == 1
+            self.selected_button == 2
         )
 
         self.render_button(
             screen,
             exit_rect,
             "SAIR",
-            self.selected_button == 2
+            self.selected_button == 3
         )

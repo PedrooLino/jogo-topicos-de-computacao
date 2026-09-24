@@ -26,9 +26,10 @@ class DeathMenu(GameScene):
         self.button_height = 65
         self.button_gap = 30
 
+        # Ordem: 0 = Créditos, 1 = Tentar novamente, 2 = Leaderboard, 3 = Menu principal
+        self.num_buttons = 4
+
         self.selected_button = 1
-
-
 
     def handle_events(self, events):
 
@@ -40,13 +41,13 @@ class DeathMenu(GameScene):
 
                     self.selected_button = (
                         self.selected_button - 1
-                    ) % 3
+                    ) % self.num_buttons
 
                 elif event.key == pygame.K_DOWN:
 
                     self.selected_button = (
                         self.selected_button + 1
-                    ) % 3
+                    ) % self.num_buttons
 
                 elif event.key in (
                     pygame.K_RETURN,
@@ -61,7 +62,7 @@ class DeathMenu(GameScene):
 
                     mouse_pos = pygame.mouse.get_pos()
 
-                    credits_rect, retry_rect, menu_rect = (
+                    credits_rect, retry_rect, leaderboard_rect, menu_rect = (
                         self.get_button_rects()
                     )
 
@@ -71,10 +72,11 @@ class DeathMenu(GameScene):
                     elif retry_rect.collidepoint(mouse_pos):
                         self.try_again()
 
+                    elif leaderboard_rect.collidepoint(mouse_pos):
+                        self.show_leaderboard()
+
                     elif menu_rect.collidepoint(mouse_pos):
                         self.main_menu()
-
-
 
     def activate_button(self):
 
@@ -85,9 +87,10 @@ class DeathMenu(GameScene):
             self.try_again()
 
         elif self.selected_button == 2:
+            self.show_leaderboard()
+
+        elif self.selected_button == 3:
             self.main_menu()
-
-
 
     def show_credits(self):
 
@@ -100,14 +103,11 @@ class DeathMenu(GameScene):
             )
         )
 
-
-
     def try_again(self):
 
         from scenes.GameWorld import GameWorld
 
         self.scene_manager.pop()
-
 
         self.scene_manager.push(
             GameWorld(
@@ -116,15 +116,22 @@ class DeathMenu(GameScene):
             )
         )
 
+    def show_leaderboard(self):
 
+        from scenes.LeaderboardScene import LeaderboardScene
+
+        self.scene_manager.push(
+            LeaderboardScene(
+                self.audio,
+                self.scene_manager
+            )
+        )
 
     def main_menu(self):
 
         from scenes.MainMenu import MainMenu
 
-
         self.scene_manager.clear()
-
 
         self.scene_manager.push(
             MainMenu(
@@ -133,8 +140,6 @@ class DeathMenu(GameScene):
             )
         )
 
-
-
     def get_button_rects(self):
 
         screen = pygame.display.get_surface()
@@ -142,13 +147,13 @@ class DeathMenu(GameScene):
         screen_width, screen_height = screen.get_size()
 
         total_height = (
-            self.button_height * 3
-            + self.button_gap * 2
+            self.button_height * self.num_buttons
+            + self.button_gap * (self.num_buttons - 1)
         )
 
         start_y = (
             screen_height - total_height
-        ) // 2 + 80
+        ) // 2 + 60
 
         button_x = (
             screen_width - self.button_width
@@ -164,13 +169,12 @@ class DeathMenu(GameScene):
         retry_rect = pygame.Rect(
             button_x,
             start_y
-            + self.button_height
-            + self.button_gap,
+            + (self.button_height + self.button_gap) * 1,
             self.button_width,
             self.button_height
         )
 
-        menu_rect = pygame.Rect(
+        leaderboard_rect = pygame.Rect(
             button_x,
             start_y
             + (self.button_height + self.button_gap) * 2,
@@ -178,14 +182,18 @@ class DeathMenu(GameScene):
             self.button_height
         )
 
-        return credits_rect, retry_rect, menu_rect
+        menu_rect = pygame.Rect(
+            button_x,
+            start_y
+            + (self.button_height + self.button_gap) * 3,
+            self.button_width,
+            self.button_height
+        )
 
-
+        return credits_rect, retry_rect, leaderboard_rect, menu_rect
 
     def update(self):
         pass
-
-
 
     def render_button(
         self,
@@ -272,11 +280,9 @@ class DeathMenu(GameScene):
                 ]
             )
 
-
     def render(self, screen):
 
         screen.fill((0, 0, 0))
-
 
         title_surf = self.title_font.render(
             "VOCÊ MORREU",
@@ -287,7 +293,7 @@ class DeathMenu(GameScene):
         title_rect = title_surf.get_rect(
             center=(
                 screen.get_width() // 2,
-                120
+                110
             )
         )
 
@@ -295,7 +301,6 @@ class DeathMenu(GameScene):
             title_surf,
             title_rect
         )
-
 
         subtitle_surf = self.font.render(
             "Sucumbiu à escuridão...",
@@ -306,7 +311,7 @@ class DeathMenu(GameScene):
         subtitle_rect = subtitle_surf.get_rect(
             center=(
                 screen.get_width() // 2,
-                190
+                170
             )
         )
 
@@ -315,7 +320,7 @@ class DeathMenu(GameScene):
             subtitle_rect
         )
 
-        credits_rect, retry_rect, menu_rect = (
+        credits_rect, retry_rect, leaderboard_rect, menu_rect = (
             self.get_button_rects()
         )
 
@@ -335,7 +340,14 @@ class DeathMenu(GameScene):
 
         self.render_button(
             screen,
+            leaderboard_rect,
+            "LEADERBOARD",
+            self.selected_button == 2
+        )
+
+        self.render_button(
+            screen,
             menu_rect,
             "MENU PRINCIPAL",
-            self.selected_button == 2
+            self.selected_button == 3
         )

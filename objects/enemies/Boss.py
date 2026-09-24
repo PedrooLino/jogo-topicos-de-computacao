@@ -29,7 +29,7 @@ class Boss(Enemy):
             audio=audio
         )
 
-        self.max_hp = 12
+        self.max_hp = 3
         self.hp = self.max_hp
 
         self.points = 100

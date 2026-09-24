@@ -9,6 +9,7 @@ from objects.Platform import Platform
 from levels.Levels import LEVELS
 from scenes.DeathMenu import DeathMenu
 from scenes.PauseMenu import PauseMenu
+from scenes.VictoryMenu import VictoryMenu
 
 
 class GameWorld(GameScene):
@@ -180,7 +181,6 @@ class GameWorld(GameScene):
                 self.drops.remove(drop)
 
 
-
     def check_collisions(self):
 
         for proj in self.enemy_projectiles:
@@ -197,10 +197,24 @@ class GameWorld(GameScene):
                 )
                 return
 
+        if (
+            self.level == 2
+            and self.enemies
+            and all(not enemy.alive for enemy in self.enemies)
+        ):
+            self.scene_manager.push(
+                VictoryMenu(
+                    self.audio,
+                    self.scene_manager
+                )
+            )
+            return
+
         self.enemies = [
             e for e in self.enemies
             if e.alive
         ]
+
 
     def handle_level_transitions(self):
         if self.player.pos.y < 0:

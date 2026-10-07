@@ -32,7 +32,7 @@ class Boss(Enemy):
         self.max_hp = 3
         self.hp = self.max_hp
 
-        self.points = 100
+        self.points = 50
         self.drop_chance = 1.0
 
         self.player = player

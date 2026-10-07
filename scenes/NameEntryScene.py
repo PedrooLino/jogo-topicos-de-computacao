@@ -6,17 +6,6 @@ ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 class NameEntryScene(GameScene):
-    """
-    Tela clássica de "digite seu nome" dos arcades: exatamente 3
-    letras, cada uma escolhida com CIMA/BAIXO, navegando entre as
-    posições com ESQUERDA/DIREITA, e confirmando com ENTER/SPACE.
-
-    `next_scene_factory` é uma função sem argumentos que cria a cena
-    a mostrar depois de salvar o nome no ranking (normalmente uma
-    lambda que cria a VictoryMenu). Isso evita que este arquivo
-    precise importar VictoryMenu diretamente.
-    """
-
     def __init__(self, audio, scene_manager, score, next_scene_factory):
         super().__init__()
 
@@ -27,14 +16,14 @@ class NameEntryScene(GameScene):
 
         self.leaderboard = Leaderboard()
 
-        self.letters = [0, 0, 0]  # índices em ALPHABET -> começa em "AAA"
+        self.letters = [0, 0, 0]
         self.selected_slot = 0
 
         self.title_font = pygame.font.SysFont("Courier New", 42, bold=True)
         self.letter_font = pygame.font.SysFont("Courier New", 90, bold=True)
         self.hint_font = pygame.font.SysFont("Courier New", 20, bold=True)
 
-    # ------------------------------------------------------------------ #
+
 
     def handle_events(self, events):
         for event in events:

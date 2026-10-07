@@ -4,15 +4,6 @@ from core.Leaderboard import Leaderboard
 
 
 class LeaderboardScene(GameScene):
-    """
-    Tela exclusiva do ranking (estilo arcade). Mostra até 10 posições
-    com nome de 3 letras + pontuação. Sai com ESC/ENTER/SPACE, ou
-    clicando no botão "VOLTAR".
-
-    Pode ser aberta a partir do MainMenu, do DeathMenu ou do
-    VictoryMenu — o "voltar" sempre retorna pra cena que a chamou,
-    já que ela é apenas empilhada por cima (scene_manager.pop()).
-    """
 
     def __init__(self, audio, scene_manager):
         super().__init__()
@@ -30,7 +21,6 @@ class LeaderboardScene(GameScene):
         self.button_width = 240
         self.button_height = 55
 
-    # ------------------------------------------------------------------ #
 
     def handle_events(self, events):
         for event in events:
@@ -73,7 +63,7 @@ class LeaderboardScene(GameScene):
         screen.blit(title_surf, title_rect)
 
         header_surf = self.header_font.render(
-            "POS   NOME       PONTOS", True, (200, 200, 200)
+            "TOP   NOME       PONTOS", True, (200, 200, 200)
         )
         header_rect = header_surf.get_rect(center=(screen_width // 2, 155))
         screen.blit(header_surf, header_rect)
@@ -85,7 +75,7 @@ class LeaderboardScene(GameScene):
 
         if not entries:
             empty_surf = self.row_font.render(
-                "NENHUM RECORDE AINDA", True, (150, 150, 150)
+                "SEJA O PRIMEIRO A CONQUISTAR O TOPO", True, (150, 150, 150)
             )
             empty_rect = empty_surf.get_rect(
                 center=(screen_width // 2, start_y + 40)
@@ -105,7 +95,7 @@ class LeaderboardScene(GameScene):
             )
             screen.blit(row_surf, row_rect)
 
-        # ---------------- Botão voltar ----------------
+        #voltar
         back_rect = self.get_back_rect()
 
         mouse_pos = pygame.mouse.get_pos()

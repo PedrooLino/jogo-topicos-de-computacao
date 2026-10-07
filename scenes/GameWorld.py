@@ -70,9 +70,9 @@ class GameWorld(GameScene):
 
         if level == 1:
             self.enemies.append(FlyEnemy(200, 100, audio=self.audio))
-            self.enemies.append(
-                FlyEnemy(1500, 300, speed=-72, audio=self.audio))
+            self.enemies.append(FlyEnemy(1500, 300, speed=-72, audio=self.audio))
             self.enemies.append(FlyEnemy(450, 600, speed=40, audio=self.audio))
+            self.enemies.append(TowerEnemy(1600, 620, audio=self.audio))
 
         if level == 2:
             self.enemies.append(Boss(1000, 840, self.player, audio=self.audio))

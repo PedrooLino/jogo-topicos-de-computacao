@@ -6,14 +6,6 @@ PROJ_SPEED = 420
 
 
 class Projectile(PhysicsBody):
-    """
-    Projétil que se move em linha reta na direção de um Vector2.
-
-    `direction` pode ser:
-      - um Vector2 (forma recomendada), ex: Vector2(1, 0), Vector2(0, -1)
-      - um número (compatibilidade com código antigo que passava só o
-        eixo X como int/float, ex: direction=1 ou direction=-1)
-    """
 
     def __init__(self, x, y, direction=None,
                  image_path="sprites/tiro.png", speed=PROJ_SPEED):
